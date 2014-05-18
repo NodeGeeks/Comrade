@@ -1,15 +1,37 @@
-angular.module('starter.controllers', [])
+angular.module('comrade.controllers', [])
 
-.controller('DashCtrl', function($scope) {
+.controller('AppController', function() {
+    $scope.name = SessionService.currentUser.name;
 })
 
-.controller('FriendsCtrl', function($scope, Friends) {
-  $scope.friends = Friends.all();
+.controller('MainController', function($scope) {
+    $scope.$hasHeader=false;
 })
 
-.controller('FriendDetailCtrl', function($scope, $stateParams, Friends) {
-  $scope.friend = Friends.get($stateParams.friendId);
+.controller('LoginController', function($scope) {
+
 })
 
-.controller('AccountCtrl', function($scope) {
+.controller('SignupController', function($scope) {
+
+})
+
+.controller('DashboardController', function($scope) {
+
+})
+
+.controller('ComradesController', function($scope, Comrades) {
+    $scope.comrades = Comrades.all();
+})
+
+.controller('ComradeInfoController', function($scope, $stateParams, Comrades) {
+    $scope.comrade = Comrades.get($stateParams.comradeId);
+})
+
+.controller('EventsController', function($scope, Events) {
+    $scope.events = Events.all();
+})
+
+.controller('MessagesController', function($scope) {
+
 });
