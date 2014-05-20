@@ -1,8 +1,24 @@
+<ion-nav-bar class="bar-dark nav-title-slide-ios7">
+</ion-nav-bar>
+
 <ion-view title="Comrades">
   <ion-content class="has-header">
-    <ion-list>
-      <ion-item ng-repeat="comrade in comrades" type="item-text-wrap" href="/account/comrades/{{comrade.id}}">
-        {{comrade.name}}
+    <ion-list can-swipe="true">
+      <ion-item class="item-avatar" ng-repeat="comrade in comrades" type="item-text-wrap" href="/account/comrades/{{comrade.id}}">
+            <img src="img/ionic.png">
+            <h2>{{comrade.name}}</h2>
+            <ion-option-button class="button-info sm-line-height col-33" ng-click="">
+                <i class="icon lrg-font ion-ionic"></i><br>
+                Chat
+            </ion-option-button>
+            <ion-option-button class="button-info sm-line-height col-33" ng-click="">
+                <i class="icon lrg-font ion-ionic"></i><br>
+                Invite
+            </ion-option-button>
+            <ion-option-button class="button-info sm-line-height col-33" ng-click="">
+                <i class="icon lrg-font ion-ionic "></i><br>
+                Find
+            </ion-option-button>
       </ion-item>
     </ion-list>
   </ion-content>

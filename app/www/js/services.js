@@ -50,7 +50,23 @@ angular.module('comrade.services', [])
 })
 
 .factory('Messages', function () {
+  var messages = [
+    { id: 0, person: 'Scruff McGruff', short: 'Take the bite out of crime!' },
+    { id: 1, person: 'Henry Brick', short: 'That game last night was amazing' },
+    { id: 2, person: 'Jason Radcliff', short: 'You like that game huh? I love DarkSouls 2' },
+    { id: 3, person: 'Ash Ketchum', short: 'Pikachu!' }
+  ];
 
+
+  return {
+    all: function() {
+      return messages;
+    },
+    get: function(messageId) {
+      // Simple index lookup
+      return messages[messageId];
+    }
+  }
 })
 
 .factory('Events', function () {

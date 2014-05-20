@@ -1,8 +1,13 @@
+<ion-nav-bar class="bar-dark nav-title-slide-ios7">
+</ion-nav-bar>
+
 <ion-view title="Messages">
   <ion-content class="has-header">
     <ion-list>
-      <ion-item ng-repeat="" type="item-text-wrap" href="#/account/chatroom/{{comrade.id}}">
-
+      <ion-item class="item-avatar" ng-repeat="message in messages" type="item-text-wrap" href="#/account/chatroom/{{message.id}}">
+        <img src="img/ionic.png">
+        <h2>{{message.person}}</h2>
+        <p>{{message.short}}</p>
       </ion-item>
     </ion-list>
   </ion-content>

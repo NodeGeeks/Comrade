@@ -1,1 +1,32 @@
 /* Empty. Add your own CSS if you like */
+.main-logo.button-icon.icon:before {
+    font-size: 144px;
+    line-height: 144px;
+}
+
+.lrg-font.button-icon.icon:before{
+    font-size: 55px;
+    line-height: 55px;
+}
+
+.xlrg-font.button-icon.icon:before{
+    font-size: 66px;
+    line-height: 66px;
+}
+
+
+.tiny-margin-top {
+    margin-top: 5px;
+}
+
+.sm-margin-top {
+    margin-top: 12px;
+}
+
+.med-margin-top {
+    margin-top: 20px;
+}
+
+.lrg-margin-top {
+    margin-top: 30px;
+}
