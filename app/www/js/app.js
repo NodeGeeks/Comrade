@@ -37,8 +37,7 @@ angular.module('comrade', ['ionic', 'comrade.controllers', 'comrade.services'])
     .state('loggedIn', {
         url: "/loggedIn",
         abstract: true,
-        templateUrl: "templates/loggedIn.html",
-        controller: 'MainController'
+        templateUrl: "templates/loggedIn.html"
     })
 
     .state('loggedIn.dashboard', {

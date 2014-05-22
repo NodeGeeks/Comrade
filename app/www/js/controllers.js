@@ -1,7 +1,7 @@
 angular.module('comrade.controllers', [])
 
-.controller('AppController', function() {
-    $scope.name = SessionService.currentUser.name;
+.controller('AppController', function($scope, UserSession) {
+    $scope.name = UserSession.currentUser.name;
 })
 
 .controller('MainController', function($scope) {
