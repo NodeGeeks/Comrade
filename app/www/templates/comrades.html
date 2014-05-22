@@ -4,19 +4,19 @@
 <ion-view title="Comrades">
   <ion-content class="has-header">
     <ion-list can-swipe="true">
-      <ion-item class="item-avatar" ng-repeat="comrade in comrades" type="item-text-wrap" href="/account/comrades/{{comrade.id}}">
+      <ion-item class="item-avatar" ng-repeat="comrade in comrades" type="item-text-wrap" href="#/account/comrades/{{comrade.id}}">
             <img src="img/ionic.png">
             <h2>{{comrade.name}}</h2>
             <ion-option-button class="button-info sm-line-height col-33" ng-click="">
-                <i class="icon lrg-font ion-ionic"></i><br>
+                <i class="icon lrg-font ion-ios7-chatbubble-outline"></i><br>
                 Chat
             </ion-option-button>
             <ion-option-button class="button-info sm-line-height col-33" ng-click="">
-                <i class="icon lrg-font ion-ionic"></i><br>
+                <i class="icon lrg-font ion-ios7-location-outline"></i><br>
                 Invite
             </ion-option-button>
             <ion-option-button class="button-info sm-line-height col-33" ng-click="">
-                <i class="icon lrg-font ion-ionic "></i><br>
+                <i class="icon lrg-font ion-pinpoint "></i><br>
                 Find
             </ion-option-button>
       </ion-item>
