@@ -5,10 +5,10 @@
     <button ng-click="facebookLogin()" class="button button-block button-positive">
       <i class="icon icon-left ion-social-facebook-outline"></i> Login with Facebook
     </button>
-    <button class="button button-block button-calm">
+    <button ng-click="socialLogin('twitter')" class="button button-block button-calm">
       <i class="icon icon-left ion-social-twitter-outline"></i> Login with Twitter
     </button>
-    <button class="button button-block button-assertive">
+    <button ng-click="socialLogin('google')" class="button button-block button-assertive">
       <i class="icon icon-left ion-social-googleplus-outline"></i> Login with Google+
     </button>
     <button ui-sref="login" class="button button-block button-dark">

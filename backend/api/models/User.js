@@ -36,7 +36,21 @@ module.exports = {
         },
         password: 'STRING',
         accessToken: 'STRING',
-        socialAccounts: 'JSON'
+        facebook: 'array',
+        twitter: 'array',
+        googleplus: 'array',
+        linkedIn: 'array',
+        foursquare: 'array',
+        myspace: 'array',
+        instagram: 'array',
+        pinterest: 'array',
+        gmail: 'array',
+        yahoo: 'array',
+        hotmail: 'array',
+        aim: 'array',
+        icloud: 'array'
+
+
     },
 
     beforeCreate: function (val, next) {

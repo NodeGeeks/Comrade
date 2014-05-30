@@ -7,14 +7,27 @@ angular.module('comrade.controllers', [])
 .controller('MainController', function($scope, $window, $http, $ionicLoading, $state, $location) {
     $scope.$hasHeader=false;
     var inAppBrowseroAuth = null;
+    hello.init( {
+            google : '981504375483-e9f503lpnnkcfs83mg8ig9mtoqba7ntt.apps.googleusercontent.com',
+            facebook : '238314456375254',
+            twitter : 'QjnVXduKJIbDaddazyN7uCQCI'
+        }
+        , {redirect_uri:'oAuthCallback'}
+    );
+    hello.on('auth.login', function(auth){
 
+        // call user information, for the given network
+        hello( auth.network ).api( '/me' ).success(function(r){
+            alert(r);
+        });
+    });
 
     $scope.$on('gotFacebookToken', function(event, token) {
         var URL = 'https://graph.facebook.com/me?fields=id&access_token='+token;
         $http({method: 'GET', url: URL}).
             success(function(data, status, headers, config) {
                 alert(JSON.stringify(data));
-                data.provider = "facebook";
+                data.provider = "twitter";
                 data.token = token;
                 var baseURL = "http://localhost:1337";
                 $http({method: 'POST', url: baseURL + '/user/linkSocialAccount', data: {id: 1, socialAccount: data }}).
@@ -45,6 +58,10 @@ angular.module('comrade.controllers', [])
             //nothing
         });
     });
+    $scope.socialLogin = function(provider) {
+        hello(provider).login();
+    };
+
     //TODO create a simple plugin/directive to carry all possible providers, what parameters they require and allow me to for example add facebook-login-button as the attr to a button and automatically take care of logging in. This plugin needs to hold all providers URLS, required parameters and Comrades App ID's
     $scope.facebookLogin = function() {
         var oAuth2Params = {

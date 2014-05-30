@@ -47,9 +47,16 @@ module.exports = {
         });
     },
 
+    loginSocialAccount: function (req, res) {
+        //TODO check which social provider
+
+    },
+
     linkSocialAccount: function (req, res) {
+        var provider = req.body.socialAccount.provider;
         console.log(req.body.socialAccount);
-        User.update({id: req.body.id}, {socialAccounts: [{provider: req.body.socialAccount.provider, id: req.body.socialAccount.id, token: req.body.socialAccount.token}] } ).exec(function afterwards(err,updated){
+        //TODO verify access token
+        User.update({id: req.body.id}, {socialAccounts: {provider: {provider: req.body.socialAccount.provider, id: req.body.socialAccount.id, token: req.body.socialAccount.token}} } ).exec(function afterwards(err,updated){
 
             if (err) {
                 console.log(err);
