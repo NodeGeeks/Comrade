@@ -5,25 +5,28 @@
 
 <ion-view title="Signup">
   <ion-content class="has-header padding">
-      <div class="list list-inset lrg-margin-top">
-          <div class="row">
-              <label class="item col item-input sm-margin-top">
-                <input type="text" placeholder="First Name">
+      <form name="signupForm" ng-submit="signup(signupData)" novalidate>
+          <div class="list list-inset lrg-margin-top">
+
+              <div class="row">
+                  <label class="item col item-input sm-margin-top">
+                        <input type="text" placeholder="First Name" name="firstName" ng-model="signupData.firstName">
+                  </label>
+                  <label class="item col item-input sm-margin-top">
+                        <input type="text" placeholder="Last Name" name="lastName" ng-model="signupData.lastName">
+                  </label>
+              </div>
+              <label class="item item-input sm-margin-top">
+                    <input type="text" placeholder="email" name="email" ng-model="signupData.email">
               </label>
-              <label class="item col item-input sm-margin-top">
-                <input type="text" placeholder="Last Name">
+              <label class="item item-input sm-margin-top">
+                    <input type="text" placeholder="username" name="username" ng-model="signupData.username">
+              </label>
+              <label class="item item-input sm-margin-top">
+                    <input type="text" placeholder="password" name="password" ng-model="signupData.password">
               </label>
           </div>
-          <label class="item item-input sm-margin-top">
-            <input type="text" placeholder="email">
-          </label>
-          <label class="item item-input sm-margin-top">
-            <input type="text" placeholder="username">
-          </label>
-          <label class="item item-input sm-margin-top">
-            <input type="text" placeholder="password">
-          </label>
-      </div>
-      <button class="button button-block button-positive sm-margin-top">signup</button>
+          <button type="submit" class="button button-block button-positive sm-margin-top">signup</button>
+      </form>
   </ion-content>
 </ion-view>

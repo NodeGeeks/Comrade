@@ -1,45 +1,115 @@
 angular.module('comrade.controllers', [])
 
 .controller('AppController', function($scope, UserSession) {
-    $scope.name = UserSession.currentUser.name;
+
 })
 
-.controller('MainController', function($scope) {
+.controller('MainController', function($scope, $window, $http, $ionicLoading, $state, $location) {
     $scope.$hasHeader=false;
+    var inAppBrowseroAuth = null;
+
+
+    $scope.$on('gotFacebookToken', function(event, token) {
+        var URL = 'https://graph.facebook.com/me?fields=id&access_token='+token;
+        $http({method: 'GET', url: URL}).
+            success(function(data, status, headers, config) {
+                alert(JSON.stringify(data));
+                data.provider = "facebook";
+                data.token = token;
+                var baseURL = "http://localhost:1337";
+                $http({method: 'POST', url: baseURL + '/user/linkSocialAccount', data: {id: 1, socialAccount: data }}).
+                    success(function(data, status, headers, config) {
+                        alert(JSON.stringify(data));
+                    }).
+                    error(function(data, status, headers, config) {
+                        alert(JSON.stringify(data));
+                    });
+                $location.path('/loggedIn/dashboard');
+                $ionicLoading.hide();
+            }).
+            error(function(data, status, headers, config) {
+                alert(JSON.stringify(data));
+            });
+
+        inAppBrowseroAuth.close();
+        $ionicLoading.show({
+            template: 'Logging in...'
+        });
+        inAppBrowseroAuth.removeEventListener('loaderror', function(data){
+            //nothing
+        });
+        inAppBrowseroAuth.removeEventListener('exit', function(data){
+            //nothing
+        });
+        inAppBrowseroAuth.removeEventListener('loadstop', function(data){
+            //nothing
+        });
+    });
     //TODO create a simple plugin/directive to carry all possible providers, what parameters they require and allow me to for example add facebook-login-button as the attr to a button and automatically take care of logging in. This plugin needs to hold all providers URLS, required parameters and Comrades App ID's
     $scope.facebookLogin = function() {
         var oAuth2Params = {
             response_type: 'token',
             client_id: '238314456375254',
             redirect_uri: 'http://localhost:8100/',
-            scope: 'read_mailbox, email, xmpp_login',
+            scope: 'read_mailbox, email, xmpp_login, read_friendlists, user_friends, create_event',
+            auth_type: 'rerequest',
             display: 'popup'
         };
         var oAuthURL = 'https://www.facebook.com/dialog/oauth?' + $.param(oAuth2Params);
-        var popupDialog = window.open(oAuthURL, '_blank', 'location=yes');
+        inAppBrowseroAuth = window.open(oAuthURL, '_blank', 'location=yes');
         //TODO implement a better way to check if the inAppBrowser was canceled, terminated, error checking. Add more listeners look at inAppBrowser documentation for further usable callbacks and methods.
-        popupDialog.addEventListener('loadstop', function(event) {
+        inAppBrowseroAuth.addEventListener('loadstop', function(event) {
             var access_token = event.url.match(/(?:#|#.+&)access_token=([^&]+)/)[1];
             var error = event.url.split("error=")[1];
             if(access_token || error){
-                if(access_token){
-                    popupDialog.close();
-                    //TODO send token off to RESTful CRUD api at comradeapp.com to handle creating the users account or logging them in.
-                    alert(access_token);
-                } else if(error){
-                    alert(error);
+                if (!access_token) {
+                    if (error) {
+                        alert(error);
+                    }
+                } else {
+                    $scope.$broadcast('gotFacebookToken', access_token);
                 }
             }
         });
+        inAppBrowseroAuth.addEventListener('loaderror', function(data){
+            alert(JSON.stringify(data));
+        })
+        inAppBrowseroAuth.addEventListener('exit', function(data){
+            //alert("inAppBrowser closed");
+        })
+
     };
 })
 
-.controller('LoginController', function($scope) {
+.controller('LoginController', function($scope, $http, $location) {
+    var baseURL = "http://localhost:1337";
+    $scope.login = function(loginData) {
+        console.log(loginData);
 
+        $http({method: 'POST', url: baseURL + '/user/login', data: loginData}).
+            success(function(data, status, headers, config) {
+                alert(JSON.stringify(data));
+                $location.path('/loggedIn/dashboard');
+            }).
+            error(function(data, status, headers, config) {
+                alert(JSON.stringify(data));
+            });
+    };
 })
 
-.controller('SignupController', function($scope) {
-
+.controller('SignupController', function($scope, $http, $location) {
+    var baseURL = "http://localhost:1337";
+    $scope.signup = function(signupData) {
+        console.log(signupData);
+        $http({method: 'POST', url: baseURL + '/user/signup', data: signupData}).
+            success(function(data, status, headers, config) {
+                alert(JSON.stringify(data));
+                $location.path('/loggedIn/newuser');
+            }).
+            error(function(data, status, headers, config) {
+                alert(JSON.stringify(data));
+            });
+    };
 })
 
 .controller('DashboardController', function($scope, $ionicModal) {

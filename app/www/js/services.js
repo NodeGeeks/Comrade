@@ -8,12 +8,7 @@ angular.module('comrade.services', [])
   // Might use a resource here that returns a JSON array
 
   // Some fake testing data
-  var comrades = [
-    { id: 0, name: 'Scruff McGruff', facebookId: '664311', twitterId: '', googlePlusId: '431611', sms: '5593380208', email: 'email@mydomain.com', bio: 'This is a short bio description of what i am all about, hi my names so and so and im awesome, i work at my job where i earn money. I got out weekley and buy stuff at stores.' },
-    { id: 1, name: 'G.I. Joe', facebookId: '71341', twitterId: '1436743', googlePlusId: '', sms: '5593380208', email: 'email@mydomain.com', bio: 'This is a short bio description of what i am all about, hi my names so and so and im awesome, i work at my job where i earn money. I got out weekley and buy stuff at stores.'  },
-    { id: 2, name: 'Miss Frizzle', facebookId: '46136', twitterId: '146331', googlePlusId: '7134643', sms: '5593380208', email: 'email@mydomain.com', bio: 'This is a short bio description of what i am all about, hi my names so and so and im awesome, i work at my job where i earn money. I got out weekley and buy stuff at stores.'  },
-    { id: 3, name: 'Ash Ketchum', facebookId: '', twitterId: '14513', googlePlusId: '', sms: '5593380208', email: 'email@mydomain.com', bio: 'This is a short bio description of what i am all about, hi my names so and so and im awesome, i work at my job where i earn money. I got out weekley and buy stuff at stores.'  }
-  ];
+  var comrades = [ ];
 
 
   return {
@@ -27,16 +22,34 @@ angular.module('comrade.services', [])
 })
 
 
-.factory('User', function () {
-
-
+.factory('ComradeAPI', function ($scope, $http, $window) {
+    //This is a sails NodeJS monogodb localhost running that we will move to a AWS Server we have for Production use
+    var baseURL = "http://localhost:1337";
     return {
-        login: function (user) {
-            UserSession.currentUser = user;
-        },
 
-        isLoggedIn: function () {
-            return UserSession.currentUser !== null;
+        login: function(params) {
+            return $http.get(baseURL+'/api/login', params);
+        },
+        register: function(params) {
+            return $http.post(baseURL+'/api/register', params);
+        },
+        logout: function() {
+           //TODO send post request to invalidate users ComradeToken
+        }
+    }
+})
+
+.factory('oAuthAPI', function ($scope, $http, $window) {
+    return {
+        facebookGEToAuth2: function(token) {
+            var URL = 'https://graph.facebook.com/me?fields=id&access_token='+token;
+            $http({method: 'GET', url: URL}).
+                success(function(data, status, headers, config) {
+                    return data;
+                }).
+                error(function(data, status, headers, config) {
+                    return data;
+                });
         }
     }
 })
@@ -44,9 +57,7 @@ angular.module('comrade.services', [])
 .factory('UserSession', function () {
 
 
-    return {
-        currentUser: null
-    }
+
 
 })
 
