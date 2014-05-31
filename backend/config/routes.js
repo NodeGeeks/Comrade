@@ -44,6 +44,11 @@ module.exports.routes = {
     'post /user/linkSocialAccount': {
         controller: 'user',
         action: 'linkSocialAccount'
+    },
+
+    'post /user/loginSocialAccount': {
+        controller: 'user',
+        action: 'loginSocialAccount'
     }
 
   // Custom routes here...

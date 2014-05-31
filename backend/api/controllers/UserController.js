@@ -49,6 +49,48 @@ module.exports = {
 
     loginSocialAccount: function (req, res) {
         //TODO check which social provider
+        var provider = req.body.provider;
+        var socialID = req.body.id;
+        var socialToken = req.body.token;
+        var firstName = req.body.firstName;
+        var lastName = req.body.lastName;
+        var email = req.body.email;
+
+        if (provider == "facebook") {
+            //TODO check if the ID exists already
+            User.findOrCreate({facebook:{socialID: socialID}},{firstName: firstName, lastName: lastName, facebook:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,record){
+                if (record) {
+                    res.json(record);
+                } else if (err.code == 'ER_DUP_ENTRY') {
+                    res.json( {error: 'Email address in use'}, 409);
+                    //TODO let the user know they already have
+                }
+            });
+        } else if (provider == "google") {
+            User.findOrCreate({googleplus:{socialID: socialID}},{firstName: firstName, lastName: lastName, googleplus:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,record){
+                if (record) {
+                    res.json(record);
+                } else if (err.code == 'ER_DUP_ENTRY') {
+                    res.json({error: 'Email address in use'}, 409);
+                    //TODO fix this and get ER_DUP_ENTRY working properly
+                } else if (err.code == 'E_UNKNOWN') {
+                    res.json({error: 'Something wierd happened, we dunno either. Contact support'}, 500);
+                }
+                console.log(err.code);
+            });
+        } else if (provider == "twitter") {
+
+        } else if (provider == "linkedin") {
+
+        } else if (provider == "instagram") {
+
+        } else if (provider == "yahoo") {
+
+        } else if (provider == "flickr") {
+
+        } else if (provider == "foursquare") {
+
+        }
 
     },
 

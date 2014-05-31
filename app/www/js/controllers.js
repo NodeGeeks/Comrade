@@ -6,95 +6,38 @@ angular.module('comrade.controllers', [])
 
 .controller('MainController', function($scope, $window, $http, $ionicLoading, $state, $location) {
     $scope.$hasHeader=false;
-    var inAppBrowseroAuth = null;
     hello.init( {
             google : '981504375483-e9f503lpnnkcfs83mg8ig9mtoqba7ntt.apps.googleusercontent.com',
             facebook : '238314456375254',
             twitter : 'QjnVXduKJIbDaddazyN7uCQCI'
-        }
-        , {redirect_uri:'oAuthCallback'}
+        }, {scope:'friends', redirect_uri: 'http://localhost:8100/'}
     );
     hello.on('auth.login', function(auth){
-
+        console.log(auth);
         // call user information, for the given network
+        //NOTE at this point we do not have a social media ID for the user only an access token for oAuth2 providers.
         hello( auth.network ).api( '/me' ).success(function(r){
-            alert(r);
+            var firstName = r.first_name;
+            var lastName = r.last_name;
+            var email = r.email;
+            console.log(r);
+            var baseURL = "http://localhost:1337";
+            $http({method: 'POST', url: baseURL + '/user/loginSocialAccount', data: {provider: auth.network, id: r.id, token: auth.authResponse.access_token, firstName: firstName, lastName: lastName, email: email }}).
+                success(function(data, status, headers, config) {
+                    console.log(data);
+                }).
+                error(function(data, status, headers, config) {
+                    console.log(data);
+                });
+            $location.path('/loggedIn/dashboard');
         });
+
     });
 
-    $scope.$on('gotFacebookToken', function(event, token) {
-        var URL = 'https://graph.facebook.com/me?fields=id&access_token='+token;
-        $http({method: 'GET', url: URL}).
-            success(function(data, status, headers, config) {
-                alert(JSON.stringify(data));
-                data.provider = "twitter";
-                data.token = token;
-                var baseURL = "http://localhost:1337";
-                $http({method: 'POST', url: baseURL + '/user/linkSocialAccount', data: {id: 1, socialAccount: data }}).
-                    success(function(data, status, headers, config) {
-                        alert(JSON.stringify(data));
-                    }).
-                    error(function(data, status, headers, config) {
-                        alert(JSON.stringify(data));
-                    });
-                $location.path('/loggedIn/dashboard');
-                $ionicLoading.hide();
-            }).
-            error(function(data, status, headers, config) {
-                alert(JSON.stringify(data));
-            });
-
-        inAppBrowseroAuth.close();
-        $ionicLoading.show({
-            template: 'Logging in...'
-        });
-        inAppBrowseroAuth.removeEventListener('loaderror', function(data){
-            //nothing
-        });
-        inAppBrowseroAuth.removeEventListener('exit', function(data){
-            //nothing
-        });
-        inAppBrowseroAuth.removeEventListener('loadstop', function(data){
-            //nothing
-        });
-    });
     $scope.socialLogin = function(provider) {
+
+        //TODO add if statements to check provider and give appropriate options such as scopes and redirect_uri's as well as callbacks if needed
         hello(provider).login();
-    };
-
-    //TODO create a simple plugin/directive to carry all possible providers, what parameters they require and allow me to for example add facebook-login-button as the attr to a button and automatically take care of logging in. This plugin needs to hold all providers URLS, required parameters and Comrades App ID's
-    $scope.facebookLogin = function() {
-        var oAuth2Params = {
-            response_type: 'token',
-            client_id: '238314456375254',
-            redirect_uri: 'http://localhost:8100/',
-            scope: 'read_mailbox, email, xmpp_login, read_friendlists, user_friends, create_event',
-            auth_type: 'rerequest',
-            display: 'popup'
-        };
-        var oAuthURL = 'https://www.facebook.com/dialog/oauth?' + $.param(oAuth2Params);
-        inAppBrowseroAuth = window.open(oAuthURL, '_blank', 'location=yes');
-        //TODO implement a better way to check if the inAppBrowser was canceled, terminated, error checking. Add more listeners look at inAppBrowser documentation for further usable callbacks and methods.
-        inAppBrowseroAuth.addEventListener('loadstop', function(event) {
-            var access_token = event.url.match(/(?:#|#.+&)access_token=([^&]+)/)[1];
-            var error = event.url.split("error=")[1];
-            if(access_token || error){
-                if (!access_token) {
-                    if (error) {
-                        alert(error);
-                    }
-                } else {
-                    $scope.$broadcast('gotFacebookToken', access_token);
-                }
-            }
-        });
-        inAppBrowseroAuth.addEventListener('loaderror', function(data){
-            alert(JSON.stringify(data));
-        })
-        inAppBrowseroAuth.addEventListener('exit', function(data){
-            //alert("inAppBrowser closed");
-        })
-
     };
 })
 
@@ -137,7 +80,13 @@ angular.module('comrade.controllers', [])
         scope: $scope,
         // The animation we want to use for the modal entrance
         animation: 'fade-in'
-    });  
+    });
+
+    $scope.socialLogout = function(provider) {
+        hello(provider).logout(function(){
+            alert("Signed out");
+        });
+    };
     $scope.openModal = function() {
         $scope.modal.show();
     };

@@ -55,11 +55,17 @@ angular.module('comrade.services', [])
 })
 
 .factory('UserSession', function () {
-
-
-
-
-})
+    var UserSession = {
+        data: {},
+        saveSession: function() { /* save session data to db */ },
+        updateSession: function() {
+            /* load data from db */
+            Session.data = $http.get('session.json').then(function(r) { return r.data;});
+        }
+    };
+    UserSession.updateSession();
+    return UserSession;
+    })
 
 .factory('Messages', function () {
   var messages = [
