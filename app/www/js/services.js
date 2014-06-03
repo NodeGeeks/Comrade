@@ -55,17 +55,21 @@ angular.module('comrade.services', [])
 })
 
 .factory('UserSession', function () {
-    var UserSession = {
-        data: {},
-        saveSession: function() { /* save session data to db */ },
-        updateSession: function() {
-            /* load data from db */
-            Session.data = $http.get('session.json').then(function(r) { return r.data;});
+    //TODO for developmement its okay to use standar localStorage but for product we want to use 'angular-local-storage' git repo by 'grevory'
+    return {
+        all: function() {
+            var userData = window.localStorage['user'];
+            if(userData) {
+                console.log(angular.fromJson(userData));
+                return angular.fromJson(userData);
+            }
+            return [];
+        },
+        save: function(userData) {
+            window.localStorage['user'] = angular.toJson(userData);
         }
-    };
-    UserSession.updateSession();
-    return UserSession;
-    })
+    }
+})
 
 .factory('Messages', function () {
   var messages = [

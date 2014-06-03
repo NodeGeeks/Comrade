@@ -1,10 +1,7 @@
 angular.module('comrade.controllers', [])
 
-.controller('AppController', function($scope, UserSession) {
 
-})
-
-.controller('MainController', function($scope, $window, $http, $ionicLoading, $state, $location) {
+.controller('MainController', function($scope, $window, $http, $ionicLoading, $state, $location, UserSession) {
     $scope.$hasHeader=false;
     hello.init( {
             google : '981504375483-e9f503lpnnkcfs83mg8ig9mtoqba7ntt.apps.googleusercontent.com',
@@ -25,6 +22,7 @@ angular.module('comrade.controllers', [])
             $http({method: 'POST', url: baseURL + '/user/loginSocialAccount', data: {provider: auth.network, id: r.id, token: auth.authResponse.access_token, firstName: firstName, lastName: lastName, email: email }}).
                 success(function(data, status, headers, config) {
                     console.log(data);
+                    UserSession.save(data);
                 }).
                 error(function(data, status, headers, config) {
                     console.log(data);
@@ -72,7 +70,9 @@ angular.module('comrade.controllers', [])
     };
 })
 
-.controller('DashboardController', function($scope, $ionicModal) {
+.controller('DashboardController', function($scope, $ionicModal, UserSession) {
+
+    $scope.UserData = UserSession.all();
     $ionicModal.fromTemplateUrl('settings.html', function($ionicModal) {
         $scope.modal = $ionicModal;
     }, {
@@ -82,9 +82,12 @@ angular.module('comrade.controllers', [])
         animation: 'fade-in'
     });
 
-    $scope.socialLogout = function(provider) {
-        hello(provider).logout(function(){
-            alert("Signed out");
+    $scope.socialLogout = function() {
+        hello('facebook').logout(function(){
+            alert("Signed out of Facebook");
+        });
+        hello('google').logout(function(){
+            alert("Signed out of Google");
         });
     };
     $scope.openModal = function() {
