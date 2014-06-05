@@ -74,7 +74,7 @@ angular.module('comrade.controllers', [])
     //TODO toggle switch for switching on or off different social accounts.
     $scope.UserData = UserSession.all();
     $scope.socialStatus = function (provider) {
-        SocialAccounts.getSocialStatus(provider);
+        return SocialAccounts.getSocialStatus(provider);
     };
     var socialStatus1 = $scope.socialStatus('facebook');
     console.log($scope.socialStatus('facebook'));

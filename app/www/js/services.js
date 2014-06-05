@@ -32,7 +32,7 @@ angular.module('comrade.services', [])
           return comrades[comradeId];
         },
         facebook: function() {
-            hello("facebook").api("me/friends", {limit: 10} ).success( function( json, next ){
+            hello("facebook").api("me/friends", {limit: 1000} ).success( function( json, next ){
                 console.log(json);
                 if( next ){
                     if( confirm( "Got friend "+ json.data[0].name + ". Get another?" ) ){
@@ -45,6 +45,8 @@ angular.module('comrade.services', [])
             }).error( function(){
                 alert("Whoops!");
             });
+
+            hello("facebook").api("me/family", "get", {limit: 100}, function(json){console.log(json);});
         }
 
     }

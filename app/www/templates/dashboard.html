@@ -4,10 +4,9 @@
         <button ng-click="openSettingsModal()" class="button button-icon icon ion-ios7-gear-outline pull-right"></button>
     </ion-nav-bar>
     <div class="bar bar-subheader">
-        <button ng-show="" ng-click="filterSocial('facebook')" class="button button-icon icon ion-social-facebook-outline"></button>
-        <button ng-show="" ng-click="filterSocial('google')" class="button button-icon icon ion-social-googleplus-outline"></button>
-        <button ng-show="" ng-click="filterSocial('')" class="button button-icon icon ion-social-twitter-outline"></button>
-        <button ng-show="" ng-click="filterSocial('')" class="button button-icon icon ion-social-facebook"></button>
+        <button ng-show="socialStatus('facebook')" ng-click="filterSocial('facebook')" class="button button-icon icon ion-social-facebook-outline"></button>
+        <button ng-show="socialStatus('google')" ng-click="filterSocial('google')" class="button button-icon icon ion-social-googleplus-outline"></button>
+        <button ng-show="socialStatus('twitter')" ng-click="filterSocial('')" class="button button-icon icon ion-social-twitter-outline"></button>
         <button ng-click="linkSocialAccount()" class="button button-icon icon ion-ios7-plus-empty"></button>
     </div>
     <div class="has-subheader social-bubble-holder">
