@@ -57,9 +57,9 @@ module.exports = {
         var email = req.body.email;
 
         if (provider == "facebook") {
-            User.findOrCreate({facebook:{socialID: socialID}},{firstName: firstName, lastName: lastName, facebook:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,newRecord){
-                if (newRecord) {
-                    res.json(newRecord);
+            User.findOrCreate({facebook:{socialID: socialID}},{firstName: firstName, lastName: lastName, facebook:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,record){
+                if (record) {
+                    res.json(record);
                 } else if (err) {
                     if (err.code == 'E_UNKNOWN') {
                         res.forbidden('The email associated with your facebook account is already linked to a Comrade account. For security reasons please login with your other account and link your facebook account'); //TODO this should be assigned to a more specific err.code value instead of E_UNKNOWN
@@ -68,51 +68,40 @@ module.exports = {
                 }
             });
         } else if (provider == "google") {
-            User.findOrCreate({googleplus:{socialID: socialID}},{firstName: firstName, lastName: lastName, googleplus:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,newRecord){
-                if (newRecord) {
-                    res.json(newRecord);
+            User.findOrCreate({googleplus:{socialID: socialID}},{firstName: firstName, lastName: lastName, googleplus:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,record){
+                if (record) {
+                    res.json(record);
                 } else if (err) {
                     if (err.code == 'E_UNKNOWN') {
-                        User.findOne({email: email}).exec(function (error,existingRecord) {
-                            console.log("existing user id " + existingRecord.id + " has linked google+");
-                            if (existingRecord) {
-                                User.update({id: existingRecord.id}, { googleplus: {socialID: socialID, socialToken: socialToken}}).exec(function afterwards(errorUpdate, updated) {
-
-                                    if (errorUpdate) {
-                                        console.log(errorUpdate);
-                                        res.serverError(errorUpdate);
-                                        return;
-                                    }
-                                    if (updated) {
-                                        console.log('Updated users social tokens and id to ' + socialID + socialToken);
-                                    }
-                                });
-                            }
-
-                            if (error) {
-                                console.log(error);
-                                res.serverError(error);
-                            }
-                        });
-
+                        res.forbidden('The email associated with your Google account is already linked to a Comrade account. For security reasons please login with your other account and link your facebook account'); //TODO this should be assigned to a more specific err.code value instead of E_UNKNOWN
                     }
                     console.log(err);
                 }
             });
         } else if (provider == "twitter") {
-
+            User.findOrCreate({twitter:{socialID: socialID}},{firstName: firstName, lastName: lastName, twitter:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,record){
+                if (record) {
+                    res.json(record);
+                } else if (err) {
+                    if (err.code == 'E_UNKNOWN') {
+                        res.forbidden('The email associated with your Twitter account is already linked to a Comrade account. For security reasons please login with your other account and link your facebook account'); //TODO this should be assigned to a more specific err.code value instead of E_UNKNOWN
+                    }
+                    console.log(err);
+                }
+            });
         } else if (provider == "linkedin") {
+            User.findOrCreate({linkedIn:{socialID: socialID}},{firstName: firstName, lastName: lastName, linkedIn:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,record){
+                if (record) {
 
-        } else if (provider == "instagram") {
-
-        } else if (provider == "yahoo") {
-
-        } else if (provider == "flickr") {
-
-        } else if (provider == "foursquare") {
-
+                    res.json(record);
+                } else if (err) {
+                    if (err.code == 'E_UNKNOWN') {
+                        res.forbidden('The email associated with your linkedIn account is already linked to a Comrade account. For security reasons please login with your other account and link your facebook account'); //TODO this should be assigned to a more specific err.code value instead of E_UNKNOWN
+                    }
+                    console.log(err);
+                }
+            });
         }
-
     },
 
     linkSocialAccount: function (req, res) {

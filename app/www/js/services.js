@@ -4,23 +4,65 @@ angular.module('comrade.services', [])
  * A simple example service that returns some data.
  */
 
-.factory('Comrades', function() {
-  // Might use a resource here that returns a JSON array
-
-  // Some fake testing data
-  var comrades = [ ];
-
-
-  return {
-    all: function() {
-      return comrades;
-    },
-    get: function(comradeId) {
-      return comrades[comradeId];
+.factory('Notifications', function() {
+    return {
+        getFacebookNotifications: function() {
+            hello("facebook").api("me/notifications", {limit: 100} ).success( function( json, next ){
+                console.log(json);
+                next();
+            }).error( function(){
+                alert("Whoops!");
+            });
+        }
     }
-  }
 })
 
+.factory('Comrades', function() {
+    // Might use a resource here that returns a JSON array
+
+    // Some fake testing data
+    var comrades = [ ];
+
+
+    return {
+        all: function() {
+          return comrades;
+        },
+        get: function(comradeId) {
+          return comrades[comradeId];
+        },
+        facebook: function() {
+            hello("facebook").api("me/friends", {limit: 10} ).success( function( json, next ){
+                console.log(json);
+                if( next ){
+                    if( confirm( "Got friend "+ json.data[0].name + ". Get another?" ) ){
+                        next();
+                    }
+                }
+                else{
+                    alert( "Got friend "+ json.data[0].name + ". That's it!" );
+                }
+            }).error( function(){
+                alert("Whoops!");
+            });
+        }
+
+    }
+})
+
+.factory('SocialAccounts', function () {
+    return {
+        getSocialStatus: function (provider) {
+            var online = function(session){
+                var current_time = (new Date()).getTime() / 1000;
+                return session && session.access_token && session.expires > current_time;
+            };
+            var social = hello(provider).getAuthResponse();
+            console.log(provider);
+            return online(social) ? true : false;
+        }
+    }
+})
 
 .factory('ComradeAPI', function ($scope, $http, $window) {
     //This is a sails NodeJS monogodb localhost running that we will move to a AWS Server we have for Production use
@@ -60,7 +102,6 @@ angular.module('comrade.services', [])
         all: function() {
             var userData = window.localStorage['user'];
             if(userData) {
-                console.log(angular.fromJson(userData));
                 return angular.fromJson(userData);
             }
             return [];
@@ -108,4 +149,8 @@ angular.module('comrade.services', [])
       return events[eventId];
     }
   }
+})
+
+.factory('SettingsController', function () {
+
 });

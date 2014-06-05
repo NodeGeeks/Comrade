@@ -2921,18 +2921,18 @@ hello.init({
 			events			: 'user_events',
 			photos			: 'user_photos,user_videos',
 			videos			: 'user_photos,user_videos',
-			friends			: '',
+			friends			: 'user_friends',
 			files			: 'user_photos,user_videos',
-			
 			publish_files	: 'user_photos,user_videos,publish_stream',
 			publish			: 'publish_stream',
 			create_event	: 'create_event',
-
+            notifications   : 'manage_notifications',
+            messages        : 'read_mailbox',
 			offline_access : 'offline_access'
 		},
 
 		// API Base URL
-		base : 'https://graph.facebook.com/',
+		base : 'https://graph.facebook.com/v2.0/',
 
 		// Map GET requests
 		get : {
@@ -2945,7 +2945,9 @@ hello.init({
 			'me/albums' : 'me/albums',
 			'me/album' : '@{id}/photos',
 			'me/photos' : 'me/photos',
-			'me/photo' : '@{id}'
+			'me/photo' : '@{id}',
+            'me/notifications' : 'me/notifications',
+            'me/messages' : 'me/inbox'
 
 			// PAGINATION
 			// https://developers.facebook.com/docs/reference/api/pagination/
@@ -2973,6 +2975,8 @@ hello.init({
 			'me/friends' : formatFriends,
 			'me/following' : formatFriends,
 			'me/followers' : formatFriends,
+            'me/notifications' : formatFriends,
+            'me/messages' : formatFriends,
 			'me/albums' : format,
 			'me/files' : format,
 			'default' : format

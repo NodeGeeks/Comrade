@@ -96,7 +96,7 @@ angular.module('comrade', ['ionic', 'comrade.controllers', 'comrade.services'])
                 controller: 'PlacesController'
             }
         }
-    })
+    });
 
 
     $urlRouterProvider.otherwise('/main');

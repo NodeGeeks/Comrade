@@ -1,47 +1,86 @@
-<ion-nav-bar class="bar-dark nav-title-slide-ios7">
-    <button ng-click="openModal()" class="button button-icon icon ion-ios7-gear"></button>
-</ion-nav-bar>
 
 <ion-view title="Dashboard">
-  <ion-content class="has-header padding">
-    <h1>{{UserData.firstName}}</h1>
-    <script id="settings.html" type="text/ng-template">
-        <div class="modal">
-            <header class="bar bar-header bar-dark">
-                <div class="button button-clear" ng-click="modal.hide()"><span class="icon ion-chevron-left"></span></div>
-                <h1 class="title">Settings</h1>
-            </header>
-            <ion-content class="has-header">
-                <ion-list>
-                    <a class="item item-icon-left" href="#">
-                        <i class="icon ion-ionic"></i>
-                        Account Info
-                    </a>
-                    <li class="item item-toggle">
-                        Notifications
-                        <label class="toggle toggle-assertive">
-                            <input type="checkbox">
-                            <div class="track">
-                                <div class="handle"></div>
-                            </div>
-                        </label>
-                    </li>
-                    <a class="item item-icon-left" href="#">
-                        <i class="icon ion-ionic"></i>
-                        Social Accounts
-                    </a>
-                    <a class="item item-icon-left" href="#">
-                        <i class="icon ion-ionic"></i>
-                        Terms of Service
-                    </a>
-                    <a class="item item-icon-left" href="#" ng-click="socialLogout('google')">
-                        <i class="icon ion-ionic"></i>
-                        Logout
-                    </a>
-                </ion-list>
-            </ion-content>
-        </div>
-    </script>
-  </ion-content>
+    <ion-nav-bar class="bar-dark nav-title-slide-ios7">
+        <button ng-click="openSettingsModal()" class="button button-icon icon ion-ios7-gear-outline pull-right"></button>
+    </ion-nav-bar>
+    <div class="bar bar-subheader">
+        <button ng-show="" ng-click="filterSocial('facebook')" class="button button-icon icon ion-social-facebook-outline"></button>
+        <button ng-show="" ng-click="filterSocial('google')" class="button button-icon icon ion-social-googleplus-outline"></button>
+        <button ng-show="" ng-click="filterSocial('')" class="button button-icon icon ion-social-twitter-outline"></button>
+        <button ng-show="" ng-click="filterSocial('')" class="button button-icon icon ion-social-facebook"></button>
+        <button ng-click="linkSocialAccount()" class="button button-icon icon ion-ios7-plus-empty"></button>
+    </div>
+    <div class="has-subheader social-bubble-holder">
+
+    </div>
+    <ion-content scroll="false" class="has-subheader force-relative">
+
+        <ion-scroll direction="y" on-refresh="refreshNotificationsList()" >
+            <ion-list>
+                <ion-item>
+                    New Invite
+                </ion-item>
+                <ion-item>
+                    New Find Request
+                </ion-item>
+                <ion-item>
+                    Wants to be your comrade
+                </ion-item>
+            </ion-list>
+        </ion-scroll>
+    </ion-content>
 </ion-view>
 
+<script id="settings.html" type="text/ng-template">
+    <div class="modal">
+        <ion-header-bar>
+            <button ng-click="closeSettingsModal()" class="button button-clear pull-right">Done</button>
+            <h1 class="title">Settings</h1>
+
+        </ion-header-bar>
+        <ion-content>
+            <ion-list>
+                <a class="item item-icon-left" href="#">
+                    <i class="icon ion-ionic"></i>
+                    Account Info
+                </a>
+                <li class="item item-toggle">
+                    Notifications
+                    <label class="toggle toggle-assertive">
+                        <input type="checkbox">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </li>
+                <a class="item item-icon-left" ng-click="openSocialAccountsModal()">
+                    <i class="icon ion-ionic"></i>
+                    Social Accounts
+                </a>
+                <a class="item item-icon-left" href="#">
+                    <i class="icon ion-ionic"></i>
+                    Terms of Service
+                </a>
+                <a class="item item-icon-left" href="#" ng-click="socialLogout('google')">
+                    <i class="icon ion-ionic"></i>
+                    Logout
+                </a>
+            </ion-list>
+        </ion-content>
+    </div>
+</script>
+
+<script id="socialaccounts.html" type="text/ng-template">
+    <div class="modal">
+        <ion-header-bar>
+            <button ng-click="closeSocialAccountsModal()" class="button button-clear icon ion-chevron-left"></button>
+            <h1 class="title">Social Accounts</h1>
+
+        </ion-header-bar>
+        <ion-content>
+            <ion-list>
+
+            </ion-list>
+        </ion-content>
+    </div>
+</script>

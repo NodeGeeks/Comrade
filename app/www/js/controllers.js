@@ -7,8 +7,9 @@ angular.module('comrade.controllers', [])
             google : '981504375483-e9f503lpnnkcfs83mg8ig9mtoqba7ntt.apps.googleusercontent.com',
             facebook : '238314456375254',
             twitter : 'QjnVXduKJIbDaddazyN7uCQCI'
-        }, {scope:'friends', redirect_uri: 'http://localhost:8100/'}
+        }, {scope:'friends, events, create_event, email, notifications', redirect_uri: 'http://localhost:8100/'}
     );
+
     hello.on('auth.login', function(auth){
         console.log(auth);
         // call user information, for the given network
@@ -29,7 +30,6 @@ angular.module('comrade.controllers', [])
                 });
             $location.path('/loggedIn/dashboard');
         });
-
     });
 
     $scope.socialLogin = function(provider) {
@@ -70,48 +70,86 @@ angular.module('comrade.controllers', [])
     };
 })
 
-.controller('DashboardController', function($scope, $ionicModal, UserSession) {
-
+.controller('DashboardController', function($scope, $ionicModal, UserSession, Notifications, SocialAccounts) {
+    //TODO toggle switch for switching on or off different social accounts.
     $scope.UserData = UserSession.all();
-    $ionicModal.fromTemplateUrl('settings.html', function($ionicModal) {
-        $scope.modal = $ionicModal;
-    }, {
-        // Use our scope for the scope of the modal to keep it simple
-        scope: $scope,
-        // The animation we want to use for the modal entrance
-        animation: 'fade-in'
-    });
+    $scope.socialStatus = function (provider) {
+        SocialAccounts.getSocialStatus(provider);
+    };
+    var socialStatus1 = $scope.socialStatus('facebook');
+    console.log($scope.socialStatus('facebook'));
+    $scope.facebookNotifications = Notifications.getFacebookNotifications();
+
+    $scope.refreshNotificationsList = function() {
+        alert('ahhh refreshing :)');
+    };
 
     $scope.socialLogout = function() {
-        hello('facebook').logout(function(){
-            alert("Signed out of Facebook");
-        });
-        hello('google').logout(function(){
-            alert("Signed out of Google");
-        });
+        if ($scope.UserData.facebook !== undefined){
+            hello('facebook').logout(function(){
+                alert("Signed out of Facebook");
+            });
+        }
+        if ($scope.UserData.google !== undefined){
+            hello('facebook').logout(function(){
+                alert("Signed out of Google");
+            });
+        }
+
     };
-    $scope.openModal = function() {
-        $scope.modal.show();
+
+    $ionicModal.fromTemplateUrl('settings.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.settingsModal = modal;
+    });
+
+    $ionicModal.fromTemplateUrl('socialaccounts.html', {
+        scope: $scope,
+        animation: 'slide-in-left'
+    }).then(function(modal) {
+        $scope.socialAccountsModal = modal;
+    });
+    $scope.openSettingsModal = function() {
+        $scope.settingsModal.show();
     };
-    $scope.closeModal = function() {
-        $scope.modal.hide();
+    $scope.closeSettingsModal = function() {
+        $scope.settingsModal.hide();
+    };
+    $scope.openSocialAccountsModal = function() {
+        $scope.socialAccountsModal.show();
+    };
+    $scope.closeSocialAccountsModal = function() {
+        $scope.socialAccountsModal.hide();
     };
     //Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {
-        $scope.modal.remove();
+        $scope.settingsModal.remove();
+        $scope.socialAccountsModal.remove();
     });
     // Execute action on hide modal
-    $scope.$on('modal.hide', function() {
+    $scope.$on('modal.hidden', function() {
         // Execute action
     });
     // Execute action on remove modal
     $scope.$on('modal.removed', function() {
         // Execute action
     });
+
+
+})
+
+.controller('SocialAccountsController', function ($scope, SocialAccounts) {
+    $scope.socialAccounts = SocialAccounts.getSocialStatus();
+})
+
+.controller('SettingsController', function ($scope) {
 })
 
 .controller('ComradesController', function($scope, Comrades) {
     $scope.comrades = Comrades.all();
+    $scope.facebookComrades = Comrades.facebook();
 })
 
 .controller('ComradeInfoController', function($scope, $stateParams, Comrades) {

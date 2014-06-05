@@ -46,3 +46,17 @@
 .sm-line-height {
     line-height: 5px;   
 }
+
+/* START Dashboard Custom Styles */
+
+.social-bubble-holder {
+    height: 120px;
+    width: 100%;
+    border-bottom: 1px solid #808080;
+    position: relative;
+}
+
+.force-relative {
+    position: relative;
+}
+/* END Dashboard Custom Styles */
