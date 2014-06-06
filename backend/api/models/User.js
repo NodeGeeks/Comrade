@@ -63,6 +63,9 @@ module.exports = {
                 next();
             });
         });
+        function randomNum(min, max) {
+            return Math.random() * (max - min) + min;
+        };
         var thingToEncrypt = "TOKEN" + "comrade" + randomNum(598, 78905478) + "ACTIVATION";
         if (val.activated !== true && val.email) {
             bcrypt.genSalt(10, function(err, salt) {
@@ -83,6 +86,8 @@ module.exports = {
                     next();
                 });
             });
+        } else {
+            next(); //in case of social login
         }
     },
 
