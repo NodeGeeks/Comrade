@@ -68,6 +68,7 @@ angular.module('comrade.controllers', [])
 })
 
 .controller('DashboardController', function($scope, $ionicModal, UserSession, Notifications, SocialAccounts) {
+    var baseURL = "http://50.18.210.192:1337";
     //TODO toggle switch for switching on or off different social accounts.
     $scope.UserData = UserSession.all();
     $scope.socialStatus = function (provider) {
@@ -81,9 +82,24 @@ angular.module('comrade.controllers', [])
         alert('ahhh refreshing :)');
     };
 
-    $scope.socialLogout = function() {
+    $scope.logout = function() {
+        $http({method: 'POST', url: baseURL + '/user/logout', data: signupData}).
+            success(function(data, status, headers, config) {
+                console.log(SON.stringify(data));
+                $location.path('/main');
 
-        hello().logout(function(val) {
+            }).
+            error(function(data, status, headers, config) {
+                alert(JSON.stringify(data));
+            });
+        hello().logout(function() {
+        });
+
+    };
+
+    $scope.socialLogout = function(provider) {
+
+        hello(provider).logout(function(val) {
            console.log(val);
         });
 
