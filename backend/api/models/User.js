@@ -35,8 +35,7 @@ module.exports = {
         },
         password: {
             type: 'string',
-            required: true,
-            password: true
+            required: true
         },
         accessToken: {
             type: 'string',
