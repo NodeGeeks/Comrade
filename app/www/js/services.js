@@ -94,6 +94,7 @@ angular.module('comrade.services', [])
         },
         save: function(userData) {
             window.localStorage['user'] = angular.toJson(userData);
+            console.log("DATA" + userData);
         }
     }
 })

@@ -11,9 +11,6 @@ angular.module('comrade.controllers', [])
     );
 
     hello.on('auth.login', function(auth){
-        console.log(auth);
-        // call user information, for the given network
-        //NOTE at this point we do not have a social media ID for the user only an access token for oAuth2 providers.
         hello( auth.network ).api( '/me' ).success(function(r){
             var firstName = r.first_name;
             var lastName = r.last_name;
@@ -22,7 +19,7 @@ angular.module('comrade.controllers', [])
             var baseURL = "http://50.18.210.192:1337";
             $http({method: 'POST', url: baseURL + '/user/loginSocialAccount', data: {provider: auth.network, id: r.id, token: auth.authResponse.access_token, firstName: firstName, lastName: lastName, email: email }}).
                 success(function(data, status, headers, config) {
-                    console.log(data);
+                    //console.log(data);
                     UserSession.save(data);
                 }).
                 error(function(data, status, headers, config) {
