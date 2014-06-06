@@ -6,7 +6,6 @@
 */
 
 module.exports = {
-    schema: true,
     attributes: {
         comradeUsername: {
             type: 'string',
@@ -44,10 +43,6 @@ module.exports = {
     toJSON: function() {
         var data = this.toObject();
         delete data.password;
-
-        delete data.activationToken;
-        delete data.activated;
-        // return the new object without password
         return data;
     },
 

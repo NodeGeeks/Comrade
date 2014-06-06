@@ -19,7 +19,7 @@ angular.module('comrade.controllers', [])
             var lastName = r.last_name;
             var email = r.email;
             console.log(r);
-            var baseURL = "http://localhost:1337";
+            var baseURL = "http://50.18.210.192:1337";
             $http({method: 'POST', url: baseURL + '/user/loginSocialAccount', data: {provider: auth.network, id: r.id, token: auth.authResponse.access_token, firstName: firstName, lastName: lastName, email: email }}).
                 success(function(data, status, headers, config) {
                     console.log(data);
@@ -40,7 +40,7 @@ angular.module('comrade.controllers', [])
 })
 
 .controller('LoginController', function($scope, $http, $location) {
-    var baseURL = "http://localhost:1337";
+    var baseURL = "http://50.18.210.192:1337";
     $scope.login = function(loginData) {
         console.log(loginData);
 
@@ -56,7 +56,7 @@ angular.module('comrade.controllers', [])
 })
 
 .controller('SignupController', function($scope, $http, $location) {
-    var baseURL = "http://localhost:1337";
+    var baseURL = "http://50.18.210.192:1337";
     $scope.signup = function(signupData) {
         console.log(signupData);
         $http({method: 'POST', url: baseURL + '/user/signup', data: signupData}).

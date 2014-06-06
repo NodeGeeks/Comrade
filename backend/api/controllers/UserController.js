@@ -61,7 +61,7 @@ module.exports = {
                 if (record) {
                     res.json(record);
                 } else if (err) {
-                    if (err.code == 'E_UNKNOWN') {
+                    if (err.code == 11000) {
                         res.forbidden('The email associated with your facebook account is already linked to a Comrade account. For security reasons please login with your other account and link your facebook account'); //TODO this should be assigned to a more specific err.code value instead of E_UNKNOWN
                     }
                     console.log(err);
@@ -72,7 +72,7 @@ module.exports = {
                 if (record) {
                     res.json(record);
                 } else if (err) {
-                    if (err.code == 'E_UNKNOWN') {
+                    if (err.code == 11000) {
                         res.forbidden('The email associated with your Google account is already linked to a Comrade account. For security reasons please login with your other account and link your facebook account'); //TODO this should be assigned to a more specific err.code value instead of E_UNKNOWN
                     }
                     console.log(err);
@@ -83,7 +83,7 @@ module.exports = {
                 if (record) {
                     res.json(record);
                 } else if (err) {
-                    if (err.code == 'E_UNKNOWN') {
+                    if (err.code == 11000) {
                         res.forbidden('The email associated with your Twitter account is already linked to a Comrade account. For security reasons please login with your other account and link your facebook account'); //TODO this should be assigned to a more specific err.code value instead of E_UNKNOWN
                     }
                     console.log(err);

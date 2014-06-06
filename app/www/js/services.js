@@ -7,9 +7,8 @@ angular.module('comrade.services', [])
 .factory('Notifications', function() {
     return {
         getFacebookNotifications: function() {
-            hello("facebook").api("me/notifications", {limit: 100} ).success( function( json, next ){
+            hello("facebook").api("me/notifications", {limit: 1000} ).success( function( json, next ){
                 console.log(json);
-                next();
             }).error( function(){
                 alert("Whoops!");
             });
@@ -60,7 +59,6 @@ angular.module('comrade.services', [])
                 return session && session.access_token && session.expires > current_time;
             };
             var social = hello(provider).getAuthResponse();
-            console.log(provider);
             return online(social) ? true : false;
         }
     }
@@ -68,7 +66,7 @@ angular.module('comrade.services', [])
 
 .factory('ComradeAPI', function ($scope, $http, $window) {
     //This is a sails NodeJS monogodb localhost running that we will move to a AWS Server we have for Production use
-    var baseURL = "http://localhost:1337";
+    var baseURL = "http://50.18.210.192:1337";
     return {
 
         login: function(params) {
@@ -83,20 +81,6 @@ angular.module('comrade.services', [])
     }
 })
 
-.factory('oAuthAPI', function ($scope, $http, $window) {
-    return {
-        facebookGEToAuth2: function(token) {
-            var URL = 'https://graph.facebook.com/me?fields=id&access_token='+token;
-            $http({method: 'GET', url: URL}).
-                success(function(data, status, headers, config) {
-                    return data;
-                }).
-                error(function(data, status, headers, config) {
-                    return data;
-                });
-        }
-    }
-})
 
 .factory('UserSession', function () {
     //TODO for developmement its okay to use standar localStorage but for product we want to use 'angular-local-storage' git repo by 'grevory'
