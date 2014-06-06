@@ -12,7 +12,7 @@ module.exports = {
         console.log(req.body);
         User.findOneByEmail(req.body.email).exec(function (err, user) {
             if (err) res.json({ error: 'DB error' }, 500);
-            user = User.toJSON(user);
+
             if (user) {
                 bcrypt.compare(req.body.password, user.password, function (err, match) {
                     if (err) res.json({ error: 'Server error' }, 500);
@@ -39,7 +39,6 @@ module.exports = {
             if (err) res.json({ error: 'DB error' }, 500);
 
             if (user) {
-                user = user.toJSON();
                 res.json(user);
             } else {
                 res.json({ error: 'Could not create user' }, 404);
@@ -60,7 +59,6 @@ module.exports = {
         if (provider == "facebook") {
             User.findOrCreate({facebook:{socialID: socialID}},{firstName: firstName, lastName: lastName, facebook:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,record){
                 if (record) {
-                    record = User.toJSON();
                     res.json(record);
                 } else if (err) {
                     if (err.code == 11000) {

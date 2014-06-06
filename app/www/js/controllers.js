@@ -82,16 +82,10 @@ angular.module('comrade.controllers', [])
     };
 
     $scope.socialLogout = function() {
-        if ($scope.UserData.facebook !== undefined){
-            hello('facebook').logout(function(){
-                alert("Signed out of Facebook");
-            });
-        }
-        if ($scope.UserData.google !== undefined){
-            hello('facebook').logout(function(){
-                alert("Signed out of Google");
-            });
-        }
+
+        hello().logout(function(val) {
+           console.log(val);
+        });
 
     };
 
