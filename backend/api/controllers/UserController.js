@@ -12,7 +12,7 @@ module.exports = {
         console.log(req.body);
         User.findOneByEmail(req.body.email).exec(function (err, user) {
             if (err) res.json({ error: 'DB error' }, 500);
-
+            user = User.toJSON(user);
             if (user) {
                 bcrypt.compare(req.body.password, user.password, function (err, match) {
                     if (err) res.json({ error: 'Server error' }, 500);
@@ -39,6 +39,7 @@ module.exports = {
             if (err) res.json({ error: 'DB error' }, 500);
 
             if (user) {
+                user = user.toJSON();
                 res.json(user);
             } else {
                 res.json({ error: 'Could not create user' }, 404);
@@ -59,6 +60,7 @@ module.exports = {
         if (provider == "facebook") {
             User.findOrCreate({facebook:{socialID: socialID}},{firstName: firstName, lastName: lastName, facebook:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,record){
                 if (record) {
+                    record = User.toJSON();
                     res.json(record);
                 } else if (err) {
                     if (err.code == 11000) {
@@ -105,19 +107,39 @@ module.exports = {
     },
 
     linkSocialAccount: function (req, res) {
-        var provider = req.body.socialAccount.provider;
+        var provider = req.body.provider;
+        var socialID = req.body.id;
+        var socialToken = req.body.token;
+        var email = req.body.email;
         console.log(req.body.socialAccount);
         //TODO verify access token
-        User.update({id: req.body.id}, {socialAccounts: {provider: {provider: req.body.socialAccount.provider, id: req.body.socialAccount.id, token: req.body.socialAccount.token}} } ).exec(function afterwards(err,updated){
+        if (provider == "facebook") {
+            User.update({id: req.body.id}, { facebook:{socialID: socialID, socialToken: socialToken}, email: email } ).exec(function afterwards(err,updated){
+                if (err) {
+                    res.serverError("error while linking social account" +err);
+                }
+            });
+        } else if (provider == "googleplus") {
+            User.update({id: req.body.id}, { googleplus:{socialID: socialID, socialToken: socialToken}, email: email } ).exec(function afterwards(err,updated){
+                if (err) {
+                    res.serverError("error while linking social account" +err);
+                }
+            });
+        } else if (provider == "twitter") {
+            User.update({id: req.body.id}, { twitter:{socialID: socialID, socialToken: socialToken}, email: email } ).exec(function afterwards(err,updated){
+                if (err) {
+                    res.serverError("error while linking social account" +err);
+                }
+            });
+        } else if (provider == "linkedin") {
+            User.update({id: req.body.id}, { linkedIn:{socialID: socialID, socialToken: socialToken}, email: email } ).exec(function afterwards(err,updated){
+                if (err) {
+                    res.serverError("error while linking social account" +err);
+                }
+            });
+        }
 
-            if (err) {
-                console.log(err);
-                // handle error here- e.g. `res.serverError(err);`
-                return;
-            }
 
-            console.log('Updated user to have name '+updated[0].name);
-        });
     }
 };
 

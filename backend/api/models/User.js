@@ -48,14 +48,7 @@ module.exports = {
     },
 
     beforeCreate: function (val, next) {
-        var isUnique = null;
-        User.findOneByEmail(val.email).exec(function(err, user) {
-            if (user) {
-                console.log(user);
-                isUnique = false;
-            }
 
-        });
         var bcrypt = require('bcrypt');
         bcrypt.genSalt(10, function(err, salt) {
             if (err) return next(err);
@@ -64,8 +57,7 @@ module.exports = {
                 if (err) return next(err);
 
                 val.password = hash;
-                if (isUnique == true) next();
-                if (isUnique == false) return next(err);
+                next();
             });
         });
     },
@@ -73,9 +65,6 @@ module.exports = {
     beforeValidate: function (val, next) {
 
         var bcrypt = require('bcrypt');
-        User.count({}, function( err, count){
-            userCount = count;
-        });
 
         function randomNum(min, max) {
             return Math.random() * (max - min) + min;
