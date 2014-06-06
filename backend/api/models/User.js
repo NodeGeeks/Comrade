@@ -40,10 +40,6 @@ module.exports = {
         accessToken: {
             type: 'string',
             required: true
-        },
-        activationToken: {
-            type: 'string',
-            required: true
         }
 
 
