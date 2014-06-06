@@ -49,7 +49,7 @@ module.exports = {
 
     beforeCreate: function (val, next) {
         var isUnique = null;
-        User.findOneByEmail(val.email).done(function(err, user) {
+        User.findOneByEmail(val.email).exec(function(err, user) {
             if (user) {
                 console.log(user);
                 isUnique = false;
