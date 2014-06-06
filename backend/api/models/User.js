@@ -7,6 +7,7 @@
 
 module.exports = {
     tableName: 'comrade_users',
+    schema: true,
     attributes: {
         comradeUsername: {
             type: 'string',
@@ -32,12 +33,20 @@ module.exports = {
             type: 'boolean',
             defaultsTo: 'false'
         },
-        password: 'STRING',
-        accessToken: 'STRING',
-        facebook: 'json',
-        twitter: 'json',
-        googleplus: 'json',
-        linkedIn: 'json'
+        password: {
+            type: 'string',
+            required: true,
+            password: true
+        },
+        accessToken: {
+            type: 'string',
+            required: true
+        },
+        activationToken: {
+            type: 'string',
+            required: true
+        }
+
 
     },
 
@@ -55,11 +64,31 @@ module.exports = {
 
             bcrypt.hash(val.password, salt, function(err, hash) {
                 if (err) return next(err);
-
                 val.password = hash;
                 next();
             });
         });
+        var thingToEncrypt = "TOKEN" + "comrade" + randomNum(598, 78905478) + "ACTIVATION";
+        if (val.activated !== true && val.email) {
+            bcrypt.genSalt(10, function(err, salt) {
+                if (err) return next(err);
+
+                bcrypt.hash(thingToEncrypt, salt, function(err, hash) {
+                    if (err) return next(err);
+
+                    val.activationToken = hash;
+                    var mailOptions = {
+                        from: 'aaron@teknologenie.com',
+                        to: val.email,
+                        subject: 'Comrade Account Verficiation',
+                        text: 'In order to use your Comrade account please follow the link bellow to verify your email address and activate your account /n /n https://comradeapp.com/user/activate?email='+val.email+'&activationToken='+hash+''
+                    };
+                    var mail = require("nodemailer").mail;
+                    mail(mailOptions);
+                    next();
+                });
+            });
+        }
     },
 
     beforeValidate: function (val, next) {
