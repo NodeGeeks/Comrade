@@ -25,14 +25,58 @@ module.exports = function serverError (err, viewOrRedirect) {
       return res.send();
     }
     else {
-      if (typeof data !== 'object' || data instanceof Error) {
+        if (typeof data !== 'object' || data instanceof Error) {
         data = {error: data};
-      }
+        }
 
-      if ( req.options.jsonp && !req.isSocket ) {
+        if ( req.options.jsonp && !req.isSocket ) {
         return res.jsonp(data);
-      }
-      else return res.json(data);
+        }
+
+        //TODO Test this to make sure it works, this is untested. Cannot test until sails-mongo fixes the unqiue attribute issue thought.
+        //TAKEN FROM @ashaffer as a solution to getting a more defined response. link: https://github.com/balderdashy/sails/issues/832
+        if(data[i].name === 'MongoError' && data[i].code === 11000) {
+            function parseDupKeyMessage(msg) {
+                var re = /^E11000 duplicate key error index\: (\w+)\.(\w+)\.\$([\w\$]+)  dup key\: \{ \: \"(.*)\" \}$/;
+                var parts = re.exec(msg);
+                if(parts && parts.length > 1) {
+                    return {
+                        db: parts[1],
+                        collection: parts[2],
+                        index: parts[3],
+                        data: parts[4]
+                    };
+                }
+            }
+
+            var info = parseDupKeyMessage(data[i].message);
+            if(info) {
+                sails.adapters['sails-mongo'].native(info.collection, function(err, col) {
+                    if(err) throw err;
+                    col.indexInformation(function(err, indexInfo) {
+                        if(err) throw err;
+                        var index = indexInfo[info.index]
+                            , error = {ValidationError: {}};
+
+                        // index = [[<fieldName>, <direction>]]
+                        _.each(index, function(field) {
+                            field = field[0];
+                            error.ValidationError[field] = {
+                                data: info.data,
+                                message: 'Validation error: ' + field + ' is not unique',
+                                rule: 'unique'
+                            };
+                        });
+
+                        sails.config[500](error, req, res);
+                    });
+                });
+                // Error transformation is async, so we need to skip reporting
+                // for now
+                return;
+            }
+        }
+        else return res.json(data);
     }
   }
 
