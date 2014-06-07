@@ -58,8 +58,7 @@ angular.module('comrade.controllers', [])
         console.log(signupData);
         $http({method: 'POST', url: baseURL + '/user/signup', data: signupData}).
             success(function(data, status, headers, config) {
-                alert(JSON.stringify(data));
-                $location.path('/loggedIn/newuser');
+                $location.path('/loggedIn/tutorial');
             }).
             error(function(data, status, headers, config) {
                 alert(JSON.stringify(data));
@@ -67,15 +66,13 @@ angular.module('comrade.controllers', [])
     };
 })
 
-.controller('DashboardController', function($scope, $ionicModal, UserSession, Notifications, SocialAccounts) {
+.controller('DashboardController', function($scope, $http, $ionicModal, $location, UserSession, Notifications, SocialAccounts) {
     var baseURL = "http://50.18.210.192:1337";
     //TODO toggle switch for switching on or off different social accounts.
     $scope.UserData = UserSession.all();
     $scope.socialStatus = function (provider) {
         return SocialAccounts.getSocialStatus(provider);
     };
-    var socialStatus1 = $scope.socialStatus('facebook');
-    console.log($scope.socialStatus('facebook'));
     $scope.facebookNotifications = Notifications.getFacebookNotifications();
 
     $scope.refreshNotificationsList = function() {
@@ -100,7 +97,7 @@ angular.module('comrade.controllers', [])
     $scope.socialLogout = function(provider) {
 
         hello(provider).logout(function(val) {
-           console.log(val);
+
         });
 
     };

@@ -40,6 +40,33 @@ module.exports = {
         accessToken: {
             type: 'string',
             required: true
+        },
+        activationToken: {
+            type: 'string'
+        },
+        facebookID: {
+            type: 'string'
+        },
+        facebookToken: {
+            type: 'string'
+        },
+        twitterID: {
+            type: 'string'
+        },
+        twitterToken: {
+            type: 'string'
+        },
+        googleID: {
+            type: 'string'
+        },
+        googleToken: {
+            type: 'string'
+        },
+        linkedInID: {
+            type: 'string'
+        },
+        linkedInToken: {
+            type: 'string'
         }
 
 

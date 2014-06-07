@@ -34,7 +34,6 @@ module.exports = {
     },
 
     signup: function (req, res) {
-        console.log(req.body);
         User.create({ comradeUsername: req.body.username, firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, password: req.body.password}).exec(function (err, user) {
             if (err) res.json({ error: 'DB error' }, 500);
 
@@ -43,6 +42,17 @@ module.exports = {
             } else {
                 res.json({ error: 'Could not create user' }, 404);
                 //TODO give better reason on why the user was unable to be created
+            }
+        });
+    },
+
+    logout: function (req, res) {
+        User.update({id: req.body.id}, {accessToken: 'invalid'}).exec(function afterwards(err,updated){
+            if (err) {
+                res.serverError("error while linking social account" +err);
+            }
+            if (updated) {
+                res.json({success: 'updated'});
             }
         });
     },
