@@ -67,7 +67,7 @@ module.exports = {
         var email = req.body.email;
 
         if (provider == "facebook") {
-            User.findOrCreate({facebook:{socialID: socialID}},{firstName: firstName, lastName: lastName, facebook:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,record){
+            User.findOrCreate({facebookID: socialID},{firstName: firstName, lastName: lastName, facebookID: socialID, facebookToken: socialToken, email: email }).exec(function createFindCB(err,record){
                 if (record) {
                     res.json(record);
                 } else if (err) {
@@ -78,7 +78,7 @@ module.exports = {
                 }
             });
         } else if (provider == "google") {
-            User.findOrCreate({googleplus:{socialID: socialID}},{firstName: firstName, lastName: lastName, googleplus:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,record){
+            User.findOrCreate({googleID: socialID},{firstName: firstName, lastName: lastName, googleID: socialID, googleToken: socialToken, email: email }).exec(function createFindCB(err,record){
                 if (record) {
                     res.json(record);
                 } else if (err) {
@@ -89,7 +89,7 @@ module.exports = {
                 }
             });
         } else if (provider == "twitter") {
-            User.findOrCreate({twitter:{socialID: socialID}},{firstName: firstName, lastName: lastName, twitter:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,record){
+            User.findOrCreate({twitterID: socialID},{firstName: firstName, lastName: lastName, twitterID: socialID, twitterToken: socialToken, email: email }).exec(function createFindCB(err,record){
                 if (record) {
                     res.json(record);
                 } else if (err) {
@@ -100,7 +100,7 @@ module.exports = {
                 }
             });
         } else if (provider == "linkedin") {
-            User.findOrCreate({linkedIn:{socialID: socialID}},{firstName: firstName, lastName: lastName, linkedIn:{socialID: socialID, socialToken: socialToken}, email: email }).exec(function createFindCB(err,record){
+            User.findOrCreate({linkedInID: socialID},{firstName: firstName, lastName: lastName, linkedInID: socialID, linkedInToken: socialToken, email: email }).exec(function createFindCB(err,record){
                 if (record) {
 
                     res.json(record);
@@ -122,25 +122,25 @@ module.exports = {
         console.log(req.body.socialAccount);
         //TODO verify access token
         if (provider == "facebook") {
-            User.update({id: req.body.id}, { facebook:{socialID: socialID, socialToken: socialToken}, email: email } ).exec(function afterwards(err,updated){
+            User.update({id: req.body.id}, { facebookID: socialID, facebookToken: socialToken, email: email } ).exec(function afterwards(err,updated){
                 if (err) {
                     res.serverError("error while linking social account" +err);
                 }
             });
         } else if (provider == "googleplus") {
-            User.update({id: req.body.id}, { googleplus:{socialID: socialID, socialToken: socialToken}, email: email } ).exec(function afterwards(err,updated){
+            User.update({id: req.body.id}, { googleID: socialID, googleToken: socialToken, email: email } ).exec(function afterwards(err,updated){
                 if (err) {
                     res.serverError("error while linking social account" +err);
                 }
             });
         } else if (provider == "twitter") {
-            User.update({id: req.body.id}, { twitter:{socialID: socialID, socialToken: socialToken}, email: email } ).exec(function afterwards(err,updated){
+            User.update({id: req.body.id}, { twitterID: socialID, twitterToken: socialToken, email: email } ).exec(function afterwards(err,updated){
                 if (err) {
                     res.serverError("error while linking social account" +err);
                 }
             });
         } else if (provider == "linkedin") {
-            User.update({id: req.body.id}, { linkedIn:{socialID: socialID, socialToken: socialToken}, email: email } ).exec(function afterwards(err,updated){
+            User.update({id: req.body.id}, { linkedInID: socialID, linkedInToken: socialToken, email: email } ).exec(function afterwards(err,updated){
                 if (err) {
                     res.serverError("error while linking social account" +err);
                 }
