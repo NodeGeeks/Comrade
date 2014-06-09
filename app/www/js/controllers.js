@@ -3,37 +3,38 @@ angular.module('comrade.controllers', [])
 
 .controller('MainController', function($scope, $window, $http, $ionicLoading, $state, $location, UserSession) {
     $scope.$hasHeader=false;
-    hello.init( {
-            google : '981504375483-e9f503lpnnkcfs83mg8ig9mtoqba7ntt.apps.googleusercontent.com',
-            facebook : '238314456375254',
-            twitter : 'QjnVXduKJIbDaddazyN7uCQCI'
-        }, {scope:'friends, events, create_event, email, notifications', redirect_uri: 'http://localhost:8100/'}
-    );
-
-    hello.on('auth.login', function(auth){
-        hello( auth.network ).api( '/me' ).success(function(r){
-            var firstName = r.first_name;
-            var lastName = r.last_name;
-            var email = r.email;
-            console.log(r);
-            var baseURL = "http://50.18.210.192:1337";
-            $http({method: 'POST', url: baseURL + '/user/loginSocialAccount', data: {provider: auth.network, id: r.id, token: auth.authResponse.access_token, firstName: firstName, lastName: lastName, email: email }}).
-                success(function(data, status, headers, config) {
-                    //console.log(data);
-                    UserSession.save(data);
-                }).
-                error(function(data, status, headers, config) {
-                    console.log(data);
-                });
-            $location.path('/loggedIn/dashboard');
-        });
-    });
 
     $scope.socialLogin = function(provider) {
+        var options = {};
+        if (provider == "facebook") {
+            options = {scope:'friends, events, create_event, email, notifications', redirect_uri:''};
+        } else if (provider == "twitter") {
+            options = {scope:'basic', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
+        } else if (provider == "google") {
+            options = {scope:'friends, events, email'};
+        }
+        hello.login( provider, options, function(auth){
+            hello(provider).api( '/me' ).success(function(r){
+                var firstName = r.first_name;
+                var lastName = r.last_name;
+                var email = r.email;
+                console.log(r);
+                var baseURL = "http://50.18.210.192:1337";
+                $http({method: 'POST', url: baseURL + '/user/loginSocialAccount', data: {provider: auth.network, id: r.id, token: auth.authResponse.access_token, firstName: firstName, lastName: lastName, email: email }}).
+                    success(function(data, status, headers, config) {
+                        //console.log(data);
 
-        //TODO add if statements to check provider and give appropriate options such as scopes and redirect_uri's as well as callbacks if needed
-        hello(provider).login();
-    };
+                        UserSession.save(data);
+                        $location.path('/loggedIn/dashboard');
+                    }).
+                    error(function(data, status, headers, config) {
+                        console.log(data);
+                    });
+
+            });
+        });
+
+    }
 })
 
 .controller('LoginController', function($scope, $http, $location) {
@@ -70,6 +71,7 @@ angular.module('comrade.controllers', [])
     var baseURL = "http://50.18.210.192:1337";
     //TODO toggle switch for switching on or off different social accounts.
     $scope.UserData = UserSession.all();
+        console.log($scope.UserData.id);
     $scope.socialStatus = function (provider) {
         return SocialAccounts.getSocialStatus(provider);
     };
@@ -80,7 +82,7 @@ angular.module('comrade.controllers', [])
     };
 
     $scope.logout = function() {
-        $http({method: 'POST', url: baseURL + '/user/logout', data: signupData}).
+        $http({method: 'POST', url: baseURL + '/user/logout', data: $scope.UserData.id}).
             success(function(data, status, headers, config) {
                 console.log(SON.stringify(data));
                 $location.path('/main');
@@ -101,6 +103,13 @@ angular.module('comrade.controllers', [])
         });
 
     };
+
+    $ionicModal.fromTemplateUrl('linkanothersocialaccount.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.linkAnotherSocialAccount = modal;
+    });
 
     $ionicModal.fromTemplateUrl('settings.html', {
         scope: $scope,
@@ -127,10 +136,17 @@ angular.module('comrade.controllers', [])
     $scope.closeSocialAccountsModal = function() {
         $scope.socialAccountsModal.hide();
     };
+    $scope.openLinkMoreModal = function() {
+        $scope.linkAnotherSocialAccount.show();
+    };
+    $scope.closeLinkMoreModal = function() {
+        $scope.linkAnotherSocialAccount.hide();
+    };
     //Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {
         $scope.settingsModal.remove();
         $scope.socialAccountsModal.remove();
+        $scope.linkAnotherSocialAccount.remove();
     });
     // Execute action on hide modal
     $scope.$on('modal.hidden', function() {
@@ -152,8 +168,8 @@ angular.module('comrade.controllers', [])
 })
 
 .controller('ComradesController', function($scope, Comrades) {
-    $scope.comrades = Comrades.all();
     $scope.facebookComrades = Comrades.facebook();
+    $scope.comrades = Comrades.all();
 })
 
 .controller('ComradeInfoController', function($scope, $stateParams, Comrades) {

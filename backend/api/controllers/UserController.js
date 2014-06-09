@@ -8,8 +8,6 @@
 module.exports = {
     login: function (req, res) {
         var bcrypt = require('bcrypt');
-        console.log(req.params);
-        console.log(req.body);
         User.findOneByEmail(req.body.email).exec(function (err, user) {
             if (err) res.json({ error: 'DB error' }, 500);
 

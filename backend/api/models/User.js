@@ -45,25 +45,29 @@ module.exports = {
             type: 'string'
         },
         facebookID: {
-            type: 'string'
+            type: 'string',
+            unique: true
         },
         facebookToken: {
             type: 'string'
         },
         twitterID: {
-            type: 'string'
+            type: 'string',
+            unique: true
         },
         twitterToken: {
             type: 'string'
         },
         googleID: {
-            type: 'string'
+            type: 'string',
+            unique: true
         },
         googleToken: {
             type: 'string'
         },
         linkedInID: {
-            type: 'string'
+            type: 'string',
+            unique: true
         },
         linkedInToken: {
             type: 'string'

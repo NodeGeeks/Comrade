@@ -31,18 +31,16 @@ angular.module('comrade.services', [])
           return comrades[comradeId];
         },
         facebook: function() {
-            hello("facebook").api("me/friends", {limit: 1000} ).success( function( json, next ){
-                console.log(json);
-                if( next ){
-                    if( confirm( "Got friend "+ json.data[0].name + ". Get another?" ) ){
-                        next();
-                    }
+            hello("facebook").api("me/friends" ).success( function( json ){
+                for (var i = 0; i < json.data.length; i++) {
+                    var obj = json.data[i];
+                    comrades = obj;
                 }
-                else{
-                    alert( "Got friend "+ json.data[0].name + ". That's it!" );
+            }).error( function(err){
+                console.log(err);
+                if( err.error.error_subcode == 463) {
+                    hello("facebook").login();
                 }
-            }).error( function(){
-                alert("Whoops!");
             });
 
             hello("facebook").api("me/family", "get", {limit: 100}, function(json){console.log(json);});
