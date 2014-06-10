@@ -8,6 +8,7 @@
 module.exports = {
     tableName: 'comrade_users',
     schema: true,
+    syncable: true,
     attributes: {
         comradeUsername: {
             type: 'string',

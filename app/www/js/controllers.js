@@ -7,7 +7,7 @@ angular.module('comrade.controllers', [])
     $scope.socialLogin = function(provider) {
         var options = {};
         if (provider == "facebook") {
-            options = {scope:'basic, friends, events, create_event, email, notifications', redirect_uri:''};
+            options = {scope:'basic, friends, events, create_event, email, notifications'};
         } else if (provider == "twitter") {
             options = {scope:'basic', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         } else if (provider == "google") {
@@ -17,6 +17,7 @@ angular.module('comrade.controllers', [])
         }
         hello.login( provider, options, function(auth){
             console.log(auth);
+            //console.log(hello("linkedin").getAuthResponse());
             hello(provider).api( '/me' ).success(function(r){
                 var firstName = r.first_name;
                 var lastName = r.last_name;
@@ -79,11 +80,6 @@ angular.module('comrade.controllers', [])
     };
     $scope.facebookNotifications = Notifications.getFacebookNotifications();
 
-    $scope.refreshNotificationsList = function() {
-        alert('ahhh refreshing :)');
-    };
-    var rejh = hello.getAuthResponse("facebook");
-        console.log(rejh);
     $scope.logout = function() {
         $http({method: 'POST', url: baseURL + '/user/logout', data: $scope.UserData.id}).
             success(function(data, status, headers, config) {
@@ -106,6 +102,41 @@ angular.module('comrade.controllers', [])
         });
 
     };
+
+    $scope.linkSocialAccount = function(provider) {
+        var options = {};
+        if (provider == "facebook") {
+            options = {scope:'basic, friends, events, create_event, email, notifications'};
+        } else if (provider == "twitter") {
+            options = {scope:'basic', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
+        } else if (provider == "google") {
+            options = {scope:'basic, friends, events, email'};
+        } else if (provider == "linkedin") {
+            options = {scope:'basic, friends, email', redirect_uri:'http://localhost:8100', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
+        }
+        hello.login( provider, options, function(auth){
+            console.log(auth);
+            hello(provider).api( '/me' ).success(function(r){
+                var firstName = r.first_name;
+                var lastName = r.last_name;
+                var email = r.email;
+                console.log(r);
+                var baseURL = "http://50.18.210.192:1337";
+                $http({method: 'POST', url: baseURL + '/user/linkSocialAccount', data: {provider: auth.network, id: r.id, token: auth.authResponse.access_token, firstName: firstName, lastName: lastName, email: email }}).
+                    success(function(data, status, headers, config) {
+                        //console.log(data);
+
+                        UserSession.save(data);
+                        $location.path('/loggedIn/dashboard');
+                    }).
+                    error(function(data, status, headers, config) {
+                        console.log(data);
+                    });
+                $location.path('/loggedIn/dashboard');
+            });
+        });
+
+    }
 
     $ionicModal.fromTemplateUrl('linkanothersocialaccount.html', {
         scope: $scope,

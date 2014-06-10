@@ -127,6 +127,7 @@ module.exports = {
             });
         } else if (provider == "googleplus") {
             User.update({id: req.body.id}, { googleID: socialID, googleToken: socialToken, email: email } ).exec(function afterwards(err,updated){
+
                 if (err) {
                     res.serverError("error while linking social account" +err);
                 }
