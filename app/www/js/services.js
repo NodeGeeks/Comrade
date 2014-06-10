@@ -98,12 +98,7 @@ angular.module('comrade.services', [])
 })
 
 .factory('Messages', function () {
-  var messages = [
-    { id: 0, person: 'Scruff McGruff', short: 'Take the bite out of crime!', source: 'Facebook', timestamp: '2005-10-30 T 10:45' },
-    { id: 1, person: 'Henry Brick', short: 'That game last night was amazing', source: 'Comrade', timestamp: '2005-10-30 T 10:45' },
-    { id: 2, person: 'Jason Radcliff', short: 'You like that game huh? I love DarkSouls 2', source: 'SMS', timestamp: '2005-10-30 T 10:45' },
-    { id: 3, person: 'Ash Ketchum', short: 'Pikachu!', source: 'Google', timestamp: '2005-10-30 T 10:45' }
-  ];
+  var messages = [ ];
 
 
   return {
@@ -113,6 +108,35 @@ angular.module('comrade.services', [])
     get: function(messageId) {
       // Simple index lookup
       return messages[messageId];
+    },
+    twitter: function() {
+      hello("twitter").api("me/messages" ).success( function( json ){
+          console.log(json);
+          for (var i = 0; i < json.length; i++) {
+              var obj = json[i];
+              messages = obj;
+          }
+      }).error( function(err){
+          console.log(err);
+          if( err.error.error_subcode == 463) {
+              hello("twitter").login();
+          }
+      });
+    },
+    twitterLoadChat: function() {
+        hello("twitter").api("me/messages" ).success( function( json ){
+            console.log(json);
+            for (var i = 0; i < json.length; i++) {
+                var obj = json[i];
+                messages = obj;
+            }
+        }).error( function(err){
+            console.log(err);
+            if( err.error.error_subcode == 463) {
+                hello("twitter").login();
+            }
+        });
+
     }
   }
 })

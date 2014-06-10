@@ -4326,7 +4326,7 @@ hello.init({
 			"me/friends"	: 'people/~/connections?count=@{limit|500}',
 			"me/followers"	: 'people/~/connections?count=@{limit|500}',
 			"me/following"	: 'people/~/connections?count=@{limit|500}',
-
+            "me/messages"   : '',
 			// http://developer.linkedin.com/documents/get-network-updates-and-statistics-api
 			"me/share"		: "people/~/network/updates?count=@{limit|250}"
 		},
@@ -4562,7 +4562,7 @@ hello.init({
 			"me/friends"	: 'friends/list.json?count=@{limit|200}',
 			"me/following"	: 'friends/list.json?count=@{limit|200}',
 			"me/followers"	: 'followers/list.json?count=@{limit|200}',
-
+            "me/messages"   : 'direct_messages.json?count=@{limit|200&since_id=1}',
 			// https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
 			"me/share"	: 'statuses/user_timeline.json?count=@{limit|200}'
 		},
@@ -4572,7 +4572,12 @@ hello.init({
 				var data = p.data;
 				p.data = null;
 				callback( 'statuses/update.json?include_entities=1&status='+data.message );
-			}
+			},
+            'me/message' : function(p,callback){
+                var data = p.data;
+                p.data = null;
+                callback('direct_messages/new.json?text='+data.message+'&screen_name='+data.screen_name);
+            }
 		},
 
 		wrap : {
