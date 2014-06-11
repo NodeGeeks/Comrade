@@ -31,28 +31,28 @@ module.exports.routes = {
     view: 'homepage'
     },
 
-    'post /user/login': {
-        controller: 'user',
+    'post /users/login': {
+        controller: 'users',
         action: 'login'
     },
 
-    'post /user/signup': {
-        controller: 'user',
+    'post /users/signup': {
+        controller: 'users',
         action: 'signup'
     },
 
-    'post /user/linkSocialAccount': {
-        controller: 'user',
+    'post /users/linkSocialAccount': {
+        controller: 'users',
         action: 'linkSocialAccount'
     },
 
-    'post /user/loginSocialAccount': {
-        controller: 'user',
+    'post /users/loginSocialAccount': {
+        controller: 'users',
         action: 'loginSocialAccount'
     },
 
-    'post /user/logout': {
-        controller: 'user',
+    'post /users/logout': {
+        controller: 'users',
         action: 'logout'
     }
 

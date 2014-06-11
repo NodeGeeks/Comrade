@@ -52,31 +52,26 @@ angular.module('comrade.services', [])
 .factory('SocialAccounts', function () {
     return {
         getSocialStatus: function (provider) {
-            var online = function(session){
-                var current_time = (new Date()).getTime() / 1000;
-                return session && session.access_token && session.expires > current_time;
+            var active = function(provider){
+                var userData = localStorage.getItem('user');
+                var parsed = angular.fromJson(userData);
+                if (provider == "facebook") {
+                    if (parsed.facebookID) return true;
+                }
+                if (provider == "twitter") {
+                    if (parsed.twitterID) return true;
+                }
+                if (provider == "google") {
+                    if (parsed.googleID) return true;
+                }
             };
-            var social = hello(provider).getAuthResponse();
-            return online(social) ? true : false;
+            return active(provider) ? true : false;
         }
     }
 })
 
 .factory('ComradeAPI', function ($scope, $http, $window) {
-    //This is a sails NodeJS monogodb localhost running that we will move to a AWS Server we have for Production use
-    var baseURL = "http://50.18.210.192:1337";
-    return {
 
-        login: function(params) {
-            return $http.get(baseURL+'/api/login', params);
-        },
-        register: function(params) {
-            return $http.post(baseURL+'/api/register', params);
-        },
-        logout: function() {
-           //TODO send post request to invalidate users ComradeToken
-        }
-    }
 })
 
 
@@ -89,6 +84,9 @@ angular.module('comrade.services', [])
                 return angular.fromJson(userData);
             }
             return [];
+        },
+        invalidate: function() {
+            window.localStorage['user'] = null;
         },
         save: function(userData) {
             window.localStorage['user'] = angular.toJson(userData);

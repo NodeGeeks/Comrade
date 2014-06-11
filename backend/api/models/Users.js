@@ -1,5 +1,5 @@
 /**
- * User.js
+ * Users.js
  *
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/#!documentation/models
@@ -11,7 +11,7 @@ module.exports = {
     attributes: {
         comradeUsername: {
             type: 'string',
-            unique: false,
+            unique: true,
             columnName: 'comradeUsername'
         },
         firstName: {
@@ -41,12 +41,12 @@ module.exports = {
         },
         password: {
             type: 'string',
-            required: true,
             columnName: 'password'
         },
         accessToken: {
             type: 'string',
             required: true,
+            defaultsTo: 'invalid',
             columnName: 'accessToken'
         },
         activationToken: {
@@ -55,7 +55,6 @@ module.exports = {
         },
         facebookID: {
             type: 'string',
-            unique: true,
             columnName: 'facebookID'
         },
         facebookToken: {
@@ -64,7 +63,6 @@ module.exports = {
         },
         twitterID: {
             type: 'string',
-            unique: true,
             columnName: 'twitterID'
         },
         twitterToken: {
@@ -73,7 +71,6 @@ module.exports = {
         },
         googleID: {
             type: 'string',
-            unique: true,
             columnName: 'googleID'
         },
         googleToken: {
@@ -82,7 +79,6 @@ module.exports = {
         },
         linkedInID: {
             type: 'string',
-            unique: true,
             columnName: 'linkedInID'
         },
         linkedInToken: {
@@ -98,69 +94,53 @@ module.exports = {
     },
 
     beforeCreate: function (val, next) {
-
-        var bcrypt = require('bcrypt');
-        bcrypt.genSalt(10, function(err, salt) {
-            if (err) return next(err);
-
-            bcrypt.hash(val.password, salt, function(err, hash) {
-                if (err) return next(err);
-                val.password = hash;
-                next();
-            });
-        });
+        var bcrypt = require('bcrypt-nodejs');
         function randomNum(min, max) {
             return Math.random() * (max - min) + min;
         };
         var thingToEncrypt = "TOKEN" + "comrade" + randomNum(598, 78905478) + "ACTIVATION";
-        if (val.activated !== true && val.email) {
+
+        if (val.password) {
             bcrypt.genSalt(10, function(err, salt) {
                 if (err) return next(err);
 
-                bcrypt.hash(thingToEncrypt, salt, function(err, hash) {
+                bcrypt.hash(val.password, salt, function() {} , function(err, hash) {
                     if (err) return next(err);
+                    val.password = hash;
+                    bcrypt.genSalt(10, function(err, salt) {
+                        if (err) return next(err);
 
-                    val.activationToken = hash;
-                    var mailOptions = {
-                        from: 'aaron@teknologenie.com',
-                        to: val.email,
-                        subject: 'Comrade Account Verficiation',
-                        text: 'In order to use your Comrade account please follow the link bellow to verify your email address and activate your account /n /n https://comradeapp.com/user/activate?email='+val.email+'&activationToken='+hash+''
-                    };
-                    var mail = require("nodemailer").mail;
-                    mail(mailOptions);
+                        bcrypt.hash(hash, salt, function() {} , function(err, hash2) {
+                            if (err) return next(err);
+                            val.accessToken = hash2;
+                            next();
+                        });
+                    });
+                });
+            });
+        } else if (!val.password) {
+            bcrypt.genSalt(10, function(err, salt) {
+                if (err) return next(err);
+
+                bcrypt.hash(thingToEncrypt, salt, function() {} , function(err, hash) {
+                    if (err) return next(err);
+                    val.accessToken = hash;
                     next();
                 });
             });
-        } else {
-            next(); //in case of social login
         }
-    },
 
-    beforeValidate: function (val, next) {
-
-        var bcrypt = require('bcrypt');
-
-        function randomNum(min, max) {
-            return Math.random() * (max - min) + min;
-        };
-
-        var thingToEncrypt = "316HTYTHR33" + "comrade" + randomNum(2383, 8323000023160000)+ "app" + randomNum(23,83) + "CREATION";
-        bcrypt.genSalt(10, function(err, salt) {
-            if (err) return next(err);
-
-            bcrypt.hash(thingToEncrypt, salt, function(err, hash) {
-                if (err) return next(err);
-
-                val.accessToken = hash;
-                val.password = hash;
-                next();
-            });
-        });
-
-
-
-
+        if (val.email) {
+            var mailOptions = {
+                from: 'aaron@teknologenie.com',
+                to: val.email,
+                subject: 'Comrade Account Verficiation',
+                text: 'In order to use your Comrade account please follow the link bellow to verify your email address and activate your account /n /n https://comradeapp.com/users/activate?email='+val.email+'&activationToken='+hash+''
+            };
+            var mail = require("nodemailer").mail;
+            mail(mailOptions);
+            next();
+        }
 
     },
 

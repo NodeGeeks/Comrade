@@ -16,17 +16,13 @@ angular.module('comrade.controllers', [])
             options = {scope:'basic, friends, email', redirect_uri:'http://localhost:8100', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         }
         hello.login( provider, options, function(auth){
-            console.log(auth);
-            //console.log(hello("linkedin").getAuthResponse());
             hello(provider).api( '/me' ).success(function(r){
                 var firstName = r.first_name;
                 var lastName = r.last_name;
-                var email = r.email;
-                console.log(r);
-                var baseURL = "http://50.18.210.192:1337";
-                $http({method: 'POST', url: baseURL + '/user/loginSocialAccount', data: {provider: auth.network, id: r.id, token: auth.authResponse.access_token, firstName: firstName, lastName: lastName, email: email }}).
+                var baseURL = "http://localhost:1337";
+                $http({method: 'POST', url: baseURL + '/users/loginSocialAccount', data: {provider: auth.network, id: r.id, token: auth.authResponse.access_token, firstName: firstName, lastName: lastName}}).
                     success(function(data, status, headers, config) {
-                        //console.log(data);
+                        console.log(data);
 
                         UserSession.save(data);
                         $location.path('/loggedIn/dashboard');
@@ -34,7 +30,6 @@ angular.module('comrade.controllers', [])
                     error(function(data, status, headers, config) {
                         console.log(data);
                     });
-                $location.path('/loggedIn/dashboard');
             });
         });
 
@@ -42,11 +37,11 @@ angular.module('comrade.controllers', [])
 })
 
 .controller('LoginController', function($scope, $http, $location) {
-    var baseURL = "http://50.18.210.192:1337";
+    var baseURL = "http://localhost:1337";
     $scope.login = function(loginData) {
         console.log(loginData);
 
-        $http({method: 'POST', url: baseURL + '/user/login', data: loginData}).
+        $http({method: 'POST', url: baseURL + '/users/login', data: loginData}).
             success(function(data, status, headers, config) {
                 alert(JSON.stringify(data));
                 $location.path('/loggedIn/dashboard');
@@ -58,10 +53,10 @@ angular.module('comrade.controllers', [])
 })
 
 .controller('SignupController', function($scope, $http, $location) {
-    var baseURL = "http://50.18.210.192:1337";
+    var baseURL = "http://localhost:1337";
     $scope.signup = function(signupData) {
         console.log(signupData);
-        $http({method: 'POST', url: baseURL + '/user/signup', data: signupData}).
+        $http({method: 'POST', url: baseURL + '/users/signup', data: signupData}).
             success(function(data, status, headers, config) {
                 $location.path('/loggedIn/tutorial');
             }).
@@ -72,7 +67,7 @@ angular.module('comrade.controllers', [])
 })
 
 .controller('DashboardController', function($scope, $http, $ionicModal, $location, UserSession, Notifications, SocialAccounts) {
-    var baseURL = "http://50.18.210.192:1337";
+    var baseURL = "http://localhost:1337";
     //TODO toggle switch for switching on or off different social accounts.
     $scope.UserData = UserSession.all();
     $scope.socialStatus = function (provider) {
@@ -81,19 +76,22 @@ angular.module('comrade.controllers', [])
     $scope.facebookNotifications = Notifications.getFacebookNotifications();
 
     $scope.logout = function() {
-        $http({method: 'POST', url: baseURL + '/user/logout', data: $scope.UserData.id}).
+        $http({method: 'POST', url: baseURL + '/users/logout', data: $scope.UserData.id}).
             success(function(data, status, headers, config) {
-                console.log(JSON.stringify(data));
+                console.log(data);
+                UserSession.invalidate();
+                hello().logout(function() {
+                });
                 $location.path('/main');
 
             }).
             error(function(data, status, headers, config) {
-                alert(JSON.stringify(data));
+                console.log(data);
             });
-        hello().logout(function() {
-        });
+
 
     };
+
 
     $scope.socialLogout = function(provider) {
 
@@ -115,16 +113,12 @@ angular.module('comrade.controllers', [])
             options = {scope:'basic, friends, email', redirect_uri:'http://localhost:8100', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         }
         hello.login( provider, options, function(auth){
-            console.log(auth);
             hello(provider).api( '/me' ).success(function(r){
-                var firstName = r.first_name;
-                var lastName = r.last_name;
                 var email = r.email;
-                console.log(r);
-                var baseURL = "http://50.18.210.192:1337";
-                $http({method: 'POST', url: baseURL + '/user/linkSocialAccount', data: {provider: auth.network, id: r.id, token: auth.authResponse.access_token, firstName: firstName, lastName: lastName, email: email }}).
+                var baseURL = "http://localhost:1337";
+                $http({method: 'POST', url: baseURL + '/users/linkSocialAccount', data: {provider: auth.network, id: $scope.UserData.id , socialID: r.id, token: $scope.UserData.accessToken, socialToken: auth.authResponse.access_token}}).
                     success(function(data, status, headers, config) {
-                        //console.log(data);
+                        console.log(data);
 
                         UserSession.save(data);
                         $location.path('/loggedIn/dashboard');
@@ -132,7 +126,6 @@ angular.module('comrade.controllers', [])
                     error(function(data, status, headers, config) {
                         console.log(data);
                     });
-                $location.path('/loggedIn/dashboard');
             });
         });
 
