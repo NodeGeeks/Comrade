@@ -114,7 +114,7 @@ angular.module('comrade.controllers', [])
         }
         hello.login( provider, options, function(auth){
             hello(provider).api( '/me' ).success(function(r){
-                var email = r.email;
+                SocialAccounts.saveSocialBasics(r, auth.network);
                 var baseURL = "http://localhost:1337";
                 $http({method: 'POST', url: baseURL + '/users/linkSocialAccount', data: {provider: auth.network, id: $scope.UserData.id , socialID: r.id, token: $scope.UserData.accessToken, socialToken: auth.authResponse.access_token}}).
                     success(function(data, status, headers, config) {

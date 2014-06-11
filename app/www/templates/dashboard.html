@@ -94,23 +94,23 @@
         </ion-header-bar>
         <ion-content>
             <ion-list>
-                <ion-item class="item item-icon-right" ng-click="linkSocialAccount('facebook')">
+                <ion-item ng-hide="socialStatus('facebook')" class="item item-icon-right" ng-click="linkSocialAccount('facebook')">
                     Facebook
                     <i class="icon ion-social-facebook"></i>
                 </ion-item>
-                <ion-item class="item item-icon-right" ng-click="linkSocialAccount('google')">
+                <ion-item ng-hide="socialStatus('google')" class="item item-icon-right" ng-click="linkSocialAccount('google')">
                     Google+
                     <i class="icon ion-social-googleplus"></i>
                 </ion-item>
-                <ion-item class="item item-icon-right" ng-click="linkSocialAccount('twitter')">
+                <ion-item ng-hide="socialStatus('twitter')" class="item item-icon-right" ng-click="linkSocialAccount('twitter')">
                     Twitter
                     <i class="icon ion-social-twitter"></i>
                 </ion-item>
-                <ion-item class="item item-icon-right" ng-click="linkSocialAccount('linkedin')">
+                <ion-item ng-hide="socialStatus('linkedin')" class="item item-icon-right" ng-click="linkSocialAccount('linkedin')">
                     LinkedIn
                     <i class="icon ion-social-linkedin"></i>
                 </ion-item>
-                <ion-item class="item item-icon-right" ng-click="linkSocialAccount('windows')" >
+                <ion-item ng-hide="socialStatus('windows')" class="item item-icon-right" ng-click="linkSocialAccount('windows')" >
                     Windows Live
                     <i class="icon ion-social-windows"></i>
                 </ion-item>

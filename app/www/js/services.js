@@ -66,7 +66,11 @@ angular.module('comrade.services', [])
                 }
             };
             return active(provider) ? true : false;
+        },
+        saveSocialBasics: function(userData, provider) {
+            window.localStorage[provider] = angular.toJson(userData);
         }
+
     }
 })
 
