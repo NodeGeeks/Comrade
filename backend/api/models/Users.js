@@ -95,11 +95,6 @@ module.exports = {
 
     beforeCreate: function (val, next) {
         var bcrypt = require('bcrypt-nodejs');
-        function randomNum(min, max) {
-            return Math.random() * (max - min) + min;
-        };
-        var thingToEncrypt = "TOKEN" + "comrade" + randomNum(598, 78905478) + "ACTIVATION";
-
         if (val.password) {
             bcrypt.genSalt(10, function(err, salt) {
                 if (err) return next(err);
@@ -107,27 +102,10 @@ module.exports = {
                 bcrypt.hash(val.password, salt, function() {} , function(err, hash) {
                     if (err) return next(err);
                     val.password = hash;
-                    bcrypt.genSalt(10, function(err, salt) {
-                        if (err) return next(err);
-
-                        bcrypt.hash(hash, salt, function() {} , function(err, hash2) {
-                            if (err) return next(err);
-                            val.accessToken = hash2;
-                            next();
-                        });
-                    });
                 });
             });
         } else if (!val.password) {
-            bcrypt.genSalt(10, function(err, salt) {
-                if (err) return next(err);
-
-                bcrypt.hash(thingToEncrypt, salt, function() {} , function(err, hash) {
-                    if (err) return next(err);
-                    val.accessToken = hash;
-                    next();
-                });
-            });
+           next();
         }
 
         if (val.email) {
