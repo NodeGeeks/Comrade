@@ -17,15 +17,6 @@
 
         <ion-scroll direction="y" on-refresh="refreshNotificationsList()" >
             <ion-list>
-                <ion-item>
-                    New Invite
-                </ion-item>
-                <ion-item>
-                    New Find Request
-                </ion-item>
-                <ion-item>
-                    Wants to be your comrade
-                </ion-item>
             </ion-list>
         </ion-scroll>
     </ion-content>
@@ -79,7 +70,26 @@
         </ion-header-bar>
         <ion-content>
             <ion-list>
-
+                <ion-item ng-show="socialStatus('facebook')" class="item item-icon-right" ng-click="linkSocialAccount('facebook')">
+                    Facebook
+                    <i class="icon ion-social-facebook"></i>
+                </ion-item>
+                <ion-item ng-show="socialStatus('google')" class="item item-icon-right" ng-click="linkSocialAccount('google')">
+                    Google+
+                    <i class="icon ion-social-googleplus"></i>
+                </ion-item>
+                <ion-item ng-show="socialStatus('twitter')" class="item item-icon-right" ng-click="toggleSocialAccount('twitter')">
+                    Twitter
+                    <i class="icon ion-social-twitter"></i>
+                </ion-item>
+                <ion-item ng-show="socialStatus('linkedin')" class="item item-icon-right" ng-click="toggleSocialAccount('linkedin')">
+                    LinkedIn
+                    <i class="icon ion-social-linkedin"></i>
+                </ion-item>
+                <ion-item ng-show="socialStatus('windows')" class="item item-icon-right" ng-click="toggleSocialAccount('windows')" >
+                    Windows Live
+                    <i class="icon ion-social-windows"></i>
+                </ion-item>
             </ion-list>
         </ion-content>
     </div>
