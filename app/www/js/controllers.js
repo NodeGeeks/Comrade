@@ -76,10 +76,10 @@ angular.module('comrade.controllers', [])
     $scope.facebookNotifications = Notifications.getFacebookNotifications();
 
     $scope.logout = function() {
-        $http({method: 'POST', url: baseURL + '/users/logout', data: $scope.UserData.id}).
+        $http({method: 'POST', url: baseURL + '/users/logout', data: {id:angular.fromJson(window.localStorage['user'])[0].id} }).
             success(function(data, status, headers, config) {
                 console.log(data);
-                UserSession.invalidate();
+                window.localStorage.clear();
                 hello().logout(function() {
                 });
                 $location.path('/main');
@@ -116,7 +116,9 @@ angular.module('comrade.controllers', [])
             hello(provider).api( '/me' ).success(function(r){
                 SocialAccounts.saveSocialBasics(r, auth.network);
                 var baseURL = "http://localhost:1337";
-                $http({method: 'POST', url: baseURL + '/users/linkSocialAccount', data: {provider: auth.network, id: $scope.UserData.id , socialID: r.id, token: $scope.UserData.accessToken, socialToken: auth.authResponse.access_token}}).
+                var id = angular.fromJson(window.localStorage['user'])[0].id;
+                var acessToken = angular.fromJson(window.localStorage['user'])[0].accessToken;
+                $http({method: 'POST', url: baseURL + '/users/linkSocialAccount', data: {provider: auth.network, id: id , socialID: r.id, token: acessToken, socialToken: auth.authResponse.access_token}}).
                     success(function(data, status, headers, config) {
                         console.log(data);
 

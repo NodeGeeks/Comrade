@@ -56,13 +56,13 @@ angular.module('comrade.services', [])
                 var userData = localStorage.getItem('user');
                 var parsed = angular.fromJson(userData);
                 if (provider == "facebook") {
-                    if (parsed.facebookID) return true;
+                    if (parsed[0].facebookID) return true;
                 }
                 if (provider == "twitter") {
-                    if (parsed.twitterID) return true;
+                    if (parsed[0].twitterID) return true;
                 }
                 if (provider == "google") {
-                    if (parsed.googleID) return true;
+                    if (parsed[0].googleID) return true;
                 }
             };
             return active(provider) ? true : false;

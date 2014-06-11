@@ -47,7 +47,7 @@ module.exports = {
     logout: function (req, res) {
         Users.update({id: req.body.id}, {accessToken: 'invalid'}).exec(function afterwards(err,updated){
             if (err) {
-                res.json(err);
+                res.serverError(err);
             }
             if (updated) {
                 res.json({success: 'updated'});
@@ -77,37 +77,63 @@ module.exports = {
                 if (provider == "facebook") {
                     //TODO findOrCreate does not receive a callback on the first run through (the create part), therefore we need to do a workaround but doing the old fashion check if the value exists if not create it.
                     Users.findOrCreate({facebookID: socialID},{firstName: firstName, lastName: lastName, facebookID: socialID, facebookToken: socialToken, accessToken: accessToken}).exec(function createFindCB(err,record){
-                        debugger;
                         if (record) {
-                            res.json(record);
+                            Users.update({facebookID: socialID}, {accessToken: accessToken}).exec(function afterwards(err,updated){
+                                if (err) {
+                                    res.serverError(err);
+                                }
+                                if (updated) {
+                                    res.json(updated);
+                                }
+                            });
                         }
-                        if (err) {
-                            console.log(err);
+                        if (err ) {
+                            res.serverError(err);
                         }
                     });
                 } else if (provider == "google") {
                     Users.findOrCreate({googleID: socialID},{firstName: firstName, lastName: lastName, googleID: socialID, googleToken: socialToken, accessToken: accessToken}).exec(function createFindCB(err,record){
                         if (record) {
-                            res.json(record);
+                            Users.update({googleID: socialID}, {accessToken: accessToken}).exec(function afterwards(err,updated){
+                                if (err) {
+                                    res.json(err);
+                                }
+                                if (updated) {
+                                    res.json(updated);
+                                }
+                            });
                         } else if (err) {
-                            console.log(err);
+                            res.serverError(err);
                         }
                     });
                 } else if (provider == "twitter") {
                     Users.findOrCreate({twitterID: socialID},{firstName: firstName, lastName: lastName, twitterID: socialID, twitterToken: socialToken, accessToken: accessToken}).exec(function createFindCB(err,record){
                         if (record) {
-                            res.json(record);
+                            Users.update({twitterID: socialID}, {accessToken: accessToken}).exec(function afterwards(err,updated){
+                                if (err) {
+                                    res.json(err);
+                                }
+                                if (updated) {
+                                    res.json(updated);
+                                }
+                            });
                         } else if (err) {
-                            console.log(err);
+                            res.serverError(err);
                         }
                     });
                 } else if (provider == "linkedin") {
                     Users.findOrCreate({linkedInID: socialID},{firstName: firstName, lastName: lastName, linkedInID: socialID, linkedInToken: socialToken, accessToken: accessToken}).exec(function createFindCB(err,record){
                         if (record) {
-
-                            res.json(record);
+                            Users.update({linkedInID: socialID}, {accessToken: accessToken}).exec(function afterwards(err,updated){
+                                if (err) {
+                                    res.json(err);
+                                }
+                                if (updated) {
+                                    res.json(updated);
+                                }
+                            });
                         } else if (err) {
-                            console.log(err);
+                            res.serverError(err);
                         }
                     });
                 }
@@ -124,7 +150,7 @@ module.exports = {
         if (provider == "facebook") {
             Users.update({id: id, accessToken:token}, { facebookID: socialID, facebookToken: socialToken } ).exec(function afterwards(err,updated){
                 if (err) {
-                    res.json(err);
+                    res.serverError(err);
                 }
                 if (updated) {
                     res.json(updated);
@@ -134,7 +160,7 @@ module.exports = {
             Users.update({id: id, accessToken:token}, { googleID: socialID, googleToken: socialToken } ).exec(function afterwards(err,updated){
 
                 if (err) {
-                    res.json(err);
+                    res.serverError(err);
                 }
                 if (updated) {
                     res.json(updated);
@@ -143,7 +169,7 @@ module.exports = {
         } else if (provider == "twitter") {
             Users.update({id: id, accessToken:token}, { twitterID: socialID, twitterToken: socialToken } ).exec(function afterwards(err,updated){
                 if (err) {
-                    res.json(err);
+                    res.serverError(err);
                 }
                 if (updated) {
                     res.json(updated);
@@ -152,7 +178,7 @@ module.exports = {
         } else if (provider == "linkedin") {
             Users.update({id: id, accessToken:token}, { linkedInID: socialID, linkedInToken: socialToken } ).exec(function afterwards(err,updated){
                 if (err) {
-                    res.json(err);
+                    res.serverError(err);
                 }
                 if (updated) {
                     res.json(updated);

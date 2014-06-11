@@ -90,6 +90,8 @@ module.exports = {
     toJSON: function() {
         var data = this.toObject();
         delete data.password;
+        delete data.updatedAt;
+        delete data.createdAt;
         return data;
     },
 
