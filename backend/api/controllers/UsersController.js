@@ -31,17 +31,33 @@ module.exports = {
         });
     },
 
-    signup: function (req, res) {
-        Users.create({ comradeUsername: req.body.username, firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, password: req.body.password}).exec(function (err, user) {
-            if (err) res.json({ error: 'DB error' }, 500);
+    activateAccount: function (req, res) {
+        Users.update({email: req.body.email, activationToken: req.body.activationToken}, {activated: true}).exec(function aftwards(err, update){
 
-            if (user) {
-                res.json(user);
-            } else {
-                res.json({ error: 'Could not create user' }, 404);
-                //TODO give better reason on why the user was unable to be created
-            }
         });
+    },
+
+    signup: function (req, res) {
+        var bcrypt = require('bcrypt-nodejs');
+        bcrypt.genSalt(10, function(err, salt) {
+            if (err) return next(err);
+
+            bcrypt.hash(req.body.password, salt, function () {}, function (err, hash) {
+                if (err) return next(err);
+                req.body.password = hash;
+                Users.create({ comradeUsername: req.body.username, firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, password: req.body.password}).exec(function (err, user) {
+                    if (err) res.json({ error: 'DB error' }, 500);
+
+                    if (user) {
+                        res.json(user);
+                    } else {
+                        res.json({ error: 'Could not create user' }, 404);
+                        //TODO give better reason on why the user was unable to be created
+                    }
+                });
+            });
+        });
+
     },
 
     logout: function (req, res) {

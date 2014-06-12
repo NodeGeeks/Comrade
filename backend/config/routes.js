@@ -54,6 +54,11 @@ module.exports.routes = {
     'post /users/logout': {
         controller: 'users',
         action: 'logout'
+    },
+
+    'post /users/activateAccount': {
+        controller: 'users',
+        action: 'activateAccount'
     }
 
   // Custom routes here...

@@ -104,28 +104,40 @@ module.exports = {
                 bcrypt.hash(val.password, salt, function() {} , function(err, hash) {
                     if (err) return next(err);
                     val.password = hash;
+                    if (val.email) {
+                        bcrypt.genSalt(10, function(err, salt) {
+                            if (err) return next(err);
+
+                            bcrypt.hash(val.password, salt, function() {} , function(err, hash) {
+                                if (err) return next(err);
+                                val.activationToken = hash
+                                if (val.email) {
+                                    var mailOptions = {
+                                        from: 'aaron@teknologenie.com',
+                                        to: val.email,
+                                        subject: 'Comrade Account Verficiation',
+                                        text: 'In order to use your Comrade account please follow the link bellow to verify your email address and activate your account /n /n https://comradeapp.com/users/activate?email='+val.email+'&activationToken='+hash+''
+                                    };
+                                    var mail = require("nodemailer").mail;
+                                    mail(mailOptions);
+                                    next();
+                                }
+                            });
+                        });
+                    } else if (!val.email) {
+                        next();
+                    }
                 });
             });
         } else if (!val.password) {
            next();
         }
 
-        if (val.email) {
-            var mailOptions = {
-                from: 'aaron@teknologenie.com',
-                to: val.email,
-                subject: 'Comrade Account Verficiation',
-                text: 'In order to use your Comrade account please follow the link bellow to verify your email address and activate your account /n /n https://comradeapp.com/users/activate?email='+val.email+'&activationToken='+hash+''
-            };
-            var mail = require("nodemailer").mail;
-            mail(mailOptions);
-            next();
-        }
 
     },
 
     afterCreate: function (val, next) {
-        //nothing yet
+
     }
 };
 
