@@ -198,6 +198,7 @@ angular.module('comrade.controllers', [])
 
 .controller('ComradesController', function($scope, Comrades) {
     $scope.facebookComrades = Comrades.facebook();
+    $scope.facebookComrades = Comrades.google();
     $scope.comrades = Comrades.all();
 })
 

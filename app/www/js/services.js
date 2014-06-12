@@ -23,6 +23,7 @@ angular.module('comrade.services', [])
     var comrades = [];
     var facebookFriends = [];
     var googleFriends = [];
+    var twitterFriends = [];
     var uniqueIds = [];
 
 
@@ -36,8 +37,37 @@ angular.module('comrade.services', [])
         },
 
         google: function() {
-
+            hello("google").api("me/friends" ).success( function( json ){
+                for (var i = 0; i < json.data.length; i++) {
+                    var obj = json.data[i];
+                    if (uniqueIds.indexOf(obj.id) == -1 && obj.objectType !== 'page'){
+                        console.log(obj);
+                        googleFriends.push(obj);
+                        comrades.push(obj);
+                        uniqueIds.push(obj.id);
+                    }
+                }
+            }).error( function(err){
+                //TODO handle error on getting friends
+            });
         },
+
+        twitter: function() {
+            hello("twitter").api("me/friends" ).success( function( json ){
+                for (var i = 0; i < json.data.length; i++) {
+                    var obj = json.data[i];
+                    if (uniqueIds.indexOf(obj.id) == -1){
+                        console.log(obj);
+                        twitterFriends.push(obj);
+                        comrades.push(obj);
+                        uniqueIds.push(obj.id);
+                    }
+                }
+            }).error( function(err){
+                //TODO handle error on getting friends
+            });
+        },
+
         facebook: function() {
 
             hello("facebook").api("me/friends" ).success( function( json ){
