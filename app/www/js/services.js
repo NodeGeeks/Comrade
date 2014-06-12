@@ -20,30 +20,55 @@ angular.module('comrade.services', [])
     // Might use a resource here that returns a JSON array
 
     // Some fake testing data
-    var comrades = [ ];
+    var comrades = [];
+    var facebookFriends = [];
+    var googleFriends = [];
+    var uniqueIds = [];
 
 
     return {
         all: function() {
+          console.log(comrades);
           return comrades;
         },
         get: function(comradeId) {
           return comrades[comradeId];
         },
+
+        google: function() {
+
+        },
         facebook: function() {
+
             hello("facebook").api("me/friends" ).success( function( json ){
                 for (var i = 0; i < json.data.length; i++) {
                     var obj = json.data[i];
-                    comrades = obj;
+                    if (uniqueIds.indexOf(obj.id) == -1){
+                        console.log(obj);
+                        facebookFriends.push(obj);
+                        comrades.push(obj);
+                        uniqueIds.push(obj.id);
+                    }
                 }
             }).error( function(err){
-                console.log(err);
                 if( err.error.error_subcode == 463) {
                     hello("facebook").login();
                 }
             });
 
-            hello("facebook").api("me/family", "get", {limit: 100}, function(json){console.log(json);});
+            hello("facebook").api("me/family", "get", {}, function(json){
+
+                for (var i = 0; i < json.data.length; i++) {
+                    var obj = json.data[i];
+                    if (uniqueIds.indexOf(obj.id) == -1){
+                        obj.thumbnail = 'http://graph.facebook.com/' + obj.id + '/picture';
+                        console.log(obj);
+                        facebookFriends.push(obj);
+                        comrades.push(obj);
+                        uniqueIds.push(obj.id);
+                    }
+                }
+            });
         }
 
     }
