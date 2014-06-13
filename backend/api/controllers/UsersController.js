@@ -73,8 +73,7 @@ module.exports = {
 
     loginSocialAccount: function (req, res) {
         var provider = req.body.provider;
-        var socialID = req.body.id;
-        var socialToken = req.body.token;
+        var socialID = req.body.socialID;
         var firstName = req.body.firstName;
         var lastName = req.body.lastName;
         var accessToken = "invalidFromLogin";
@@ -83,7 +82,7 @@ module.exports = {
             return Math.random() * (max - min) + min;
         };
 
-        var thingToEncrypt = socialToken + "comrade" + randomNum(598, 78905478) + socialID + randomNum(23, 8300000000);
+        var thingToEncrypt = "comrade" + randomNum(598, 78905478) + socialID + randomNum(23, 8300000000);
         bcrypt.genSalt(10, function(err, salt) {
             if (err) return next(err);
 
@@ -92,7 +91,7 @@ module.exports = {
                 accessToken = hash;
                 if (provider == "facebook") {
                     //TODO findOrCreate does not receive a callback on the first run through (the create part), therefore we need to do a workaround but doing the old fashion check if the value exists if not create it.
-                    Users.findOrCreate({facebookID: socialID},{firstName: firstName, lastName: lastName, facebookID: socialID, facebookToken: socialToken, accessToken: accessToken}).exec(function createFindCB(err,record){
+                    Users.findOrCreate({facebookID: socialID},{firstName: firstName, lastName: lastName, facebookID: socialID, accessToken: accessToken}).exec(function createFindCB(err,record){
                         if (record) {
                             Users.update({facebookID: socialID}, {accessToken: accessToken}).exec(function afterwards(err,updated){
                                 if (err) {
@@ -108,7 +107,7 @@ module.exports = {
                         }
                     });
                 } else if (provider == "google") {
-                    Users.findOrCreate({googleID: socialID},{firstName: firstName, lastName: lastName, googleID: socialID, googleToken: socialToken, accessToken: accessToken}).exec(function createFindCB(err,record){
+                    Users.findOrCreate({googleID: socialID},{firstName: firstName, lastName: lastName, googleID: socialID, accessToken: accessToken}).exec(function createFindCB(err,record){
                         if (record) {
                             Users.update({googleID: socialID}, {accessToken: accessToken}).exec(function afterwards(err,updated){
                                 if (err) {
@@ -123,7 +122,7 @@ module.exports = {
                         }
                     });
                 } else if (provider == "twitter") {
-                    Users.findOrCreate({twitterID: socialID},{firstName: firstName, lastName: lastName, twitterID: socialID, twitterToken: socialToken, accessToken: accessToken}).exec(function createFindCB(err,record){
+                    Users.findOrCreate({twitterID: socialID},{firstName: firstName, lastName: lastName, twitterID: socialID, accessToken: accessToken}).exec(function createFindCB(err,record){
                         if (record) {
                             Users.update({twitterID: socialID}, {accessToken: accessToken}).exec(function afterwards(err,updated){
                                 if (err) {
@@ -138,7 +137,7 @@ module.exports = {
                         }
                     });
                 } else if (provider == "linkedin") {
-                    Users.findOrCreate({linkedInID: socialID},{firstName: firstName, lastName: lastName, linkedInID: socialID, linkedInToken: socialToken, accessToken: accessToken}).exec(function createFindCB(err,record){
+                    Users.findOrCreate({linkedInID: socialID},{firstName: firstName, lastName: lastName, linkedInID: socialID, accessToken: accessToken}).exec(function createFindCB(err,record){
                         if (record) {
                             Users.update({linkedInID: socialID}, {accessToken: accessToken}).exec(function afterwards(err,updated){
                                 if (err) {
@@ -160,11 +159,10 @@ module.exports = {
     linkSocialAccount: function (req, res) {
         var provider = req.body.provider;
         var socialID = req.body.socialID;
-        var socialToken = req.body.socialToken;
         var id = req.body.id;
         var token = req.body.token;
         if (provider == "facebook") {
-            Users.update({id: id, accessToken:token}, { facebookID: socialID, facebookToken: socialToken } ).exec(function afterwards(err,updated){
+            Users.update({id: id, accessToken:token}, { facebookID: socialID} ).exec(function afterwards(err,updated){
                 if (err) {
                     res.serverError(err);
                 }
@@ -173,7 +171,7 @@ module.exports = {
                 }
             });
         } else if (provider == "google") {
-            Users.update({id: id, accessToken:token}, { googleID: socialID, googleToken: socialToken } ).exec(function afterwards(err,updated){
+            Users.update({id: id, accessToken:token}, { googleID: socialID} ).exec(function afterwards(err,updated){
 
                 if (err) {
                     res.serverError(err);
@@ -183,7 +181,7 @@ module.exports = {
                 }
             });
         } else if (provider == "twitter") {
-            Users.update({id: id, accessToken:token}, { twitterID: socialID, twitterToken: socialToken } ).exec(function afterwards(err,updated){
+            Users.update({id: id, accessToken:token}, { twitterID: socialID} ).exec(function afterwards(err,updated){
                 if (err) {
                     res.serverError(err);
                 }
@@ -192,7 +190,7 @@ module.exports = {
                 }
             });
         } else if (provider == "linkedin") {
-            Users.update({id: id, accessToken:token}, { linkedInID: socialID, linkedInToken: socialToken } ).exec(function afterwards(err,updated){
+            Users.update({id: id, accessToken:token}, { linkedInID: socialID} ).exec(function afterwards(err,updated){
                 if (err) {
                     res.serverError(err);
                 }

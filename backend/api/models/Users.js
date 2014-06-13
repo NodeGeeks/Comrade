@@ -57,42 +57,19 @@ module.exports = {
             type: 'string',
             columnName: 'facebookID'
         },
-        facebookToken: {
-            type: 'string',
-            columnName: 'facebookToken'
-        },
         twitterID: {
             type: 'string',
             columnName: 'twitterID'
         },
-        twitterToken: {
-            type: 'string',
-            columnName: 'twitterToken'
-        },
+
         googleID: {
             type: 'string',
             columnName: 'googleID'
         },
-        googleToken: {
-            type: 'string',
-            columnName: 'googleToken'
-        },
         linkedInID: {
             type: 'string',
             columnName: 'linkedInID'
-        },
-        linkedInToken: {
-            type: 'string',
-            columnName: 'linkedInToken'
         }
-    },
-
-    toJSON: function() {
-        var data = this.toObject();
-        delete data.password;
-        delete data.updatedAt;
-        delete data.createdAt;
-        return data;
     },
 
     beforeCreate: function (val, next) {
