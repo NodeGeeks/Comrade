@@ -11,7 +11,9 @@
         <button ng-click="openLinkMoreModal()" class="button button-icon icon ion-ios7-plus-empty"></button>
     </div>
     <div class="has-subheader social-bubble-holder">
-
+        <img class="social-bubble" src="{{UserData.facebookPic}}" ng-show="socialStatus('facebook')" >
+        <img class="social-bubble" src="{{UserData.googlePic}}" ng-show="socialStatus('google')" >
+        <img class="social-bubble" src="{{UserData.twitterPic}}" ng-show="socialStatus('twitter')" >
     </div>
     <ion-content scroll="false" class="has-subheader force-relative">
 
