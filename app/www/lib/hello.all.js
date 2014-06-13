@@ -2840,7 +2840,7 @@ hello.init({
 
 function formatUser(o){
 	if(o.id){
-		o.thumbnail = o.picture = 'http://graph.facebook.com/'+o.id+'/picture';
+		o.thumbnail = o.picture = 'http://graph.facebook.com/'+o.id+'/picture?type=large';
 	}
 	return o;
 }
@@ -4472,6 +4472,7 @@ function formatUser(o){
 			o.first_name = m[0];
 			o.last_name = m[1];
 		}
+        o.profile_image_url = o.profile_image_url.replace('_normal', '');
 		o.thumbnail = o.profile_image_url;
 	}
 }
