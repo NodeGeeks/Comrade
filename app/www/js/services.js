@@ -6,13 +6,7 @@ angular.module('comrade.services', [])
 
 .factory('Notifications', function() {
     return {
-        getFacebookNotifications: function() {
-            hello("facebook").api("me/notifications", {limit: 1000} ).success( function( json, next ){
-                console.log(json);
-            }).error( function(){
-                alert("Whoops!");
-            });
-        }
+
     }
 })
 
@@ -21,34 +15,37 @@ angular.module('comrade.services', [])
 
     // Some fake testing data
     var comrades = [];
-    var facebookFriends = [];
-    var googleFriends = [];
-    var twitterFriends = [];
     var uniqueIds = [];
 
 
     return {
         all: function() {
-          console.log(comrades);
-          return comrades;
+          comradess = angular.fromJson(window.localStorage['comrades']);
+          return comradess;
         },
         get: function(comradeId) {
           return comrades[comradeId];
         },
+        save: function() {
 
+        },
         google: function() {
             hello("google").api("me/friends" ).success( function( json ){
                 for (var i = 0; i < json.data.length; i++) {
                     var obj = json.data[i];
+                    obj.provider = "google";
+                    obj.type = "social";
                     if (uniqueIds.indexOf(obj.id) == -1 && obj.objectType !== 'page'){
-                        console.log(obj);
-                        googleFriends.push(obj);
                         comrades.push(obj);
                         uniqueIds.push(obj.id);
+                        window.localStorage['comrades'] = angular.toJson(comrades);
                     }
+
                 }
             }).error( function(err){
-                //TODO handle error on getting friends
+                if (err.error.code = 401) {
+                    hello.login('google', {display: 'none'}, function() {});
+                }
             });
         },
 
@@ -56,15 +53,16 @@ angular.module('comrade.services', [])
             hello("twitter").api("me/friends" ).success( function( json ){
                 for (var i = 0; i < json.data.length; i++) {
                     var obj = json.data[i];
+                    obj.provider = "twitter";
+                    obj.type = "social";
                     if (uniqueIds.indexOf(obj.id) == -1){
-                        console.log(obj);
-                        twitterFriends.push(obj);
                         comrades.push(obj);
                         uniqueIds.push(obj.id);
+                        window.localStorage['comrades'] = angular.toJson(comrades);
                     }
                 }
             }).error( function(err){
-                //TODO handle error on getting friends
+                hello("twitter").login();
             });
         },
 
@@ -73,11 +71,12 @@ angular.module('comrade.services', [])
             hello("facebook").api("me/friends" ).success( function( json ){
                 for (var i = 0; i < json.data.length; i++) {
                     var obj = json.data[i];
+                    obj.provider = "facebook";
+                    obj.type = "comrade";
                     if (uniqueIds.indexOf(obj.id) == -1){
-                        console.log(obj);
-                        facebookFriends.push(obj);
                         comrades.push(obj);
                         uniqueIds.push(obj.id);
+                        window.localStorage['comrades'] = angular.toJson(comrades);
                     }
                 }
             }).error( function(err){
@@ -90,14 +89,16 @@ angular.module('comrade.services', [])
 
                 for (var i = 0; i < json.data.length; i++) {
                     var obj = json.data[i];
+                    obj.provider = "facebook";
+                    obj.type = "social";
                     if (uniqueIds.indexOf(obj.id) == -1){
                         obj.thumbnail = 'http://graph.facebook.com/' + obj.id + '/picture';
-                        console.log(obj);
-                        facebookFriends.push(obj);
                         comrades.push(obj);
                         uniqueIds.push(obj.id);
+                        window.localStorage['comrades'] = angular.toJson(comrades);
                     }
                 }
+
             });
         }
 
@@ -111,19 +112,33 @@ angular.module('comrade.services', [])
                 var userData = localStorage.getItem('user');
                 var parsed = angular.fromJson(userData);
                 if (provider == "facebook") {
-                    if (parsed[0].facebookID) return true;
+                    if (parsed.facebookID) return true;
                 }
                 if (provider == "twitter") {
-                    if (parsed[0].twitterID) return true;
+                    if (parsed.twitterID) return true;
                 }
                 if (provider == "google") {
-                    if (parsed[0].googleID) return true;
+                    if (parsed.googleID) return true;
                 }
             };
             return active(provider) ? true : false;
         },
-        saveSocialBasics: function(userData, provider) {
-            window.localStorage[provider] = angular.toJson(userData);
+        setSocialProfileImage: function (provider, imgURL) {
+            var userData = window.localStorage['user'];
+            var parsed = angular.fromJson(userData);
+            if (provider == 'facebook') {
+                parsed.facebookPic = imgURL;
+                window.localStorage['user'] = angular.toJson(parsed);
+            }
+            if (provider == 'google') {
+                parsed.googlePic = imgURL;
+                window.localStorage['user'] = angular.toJson(parsed);
+            }
+            if (provider == 'twitter') {
+                parsed.twitterPic = imgURL;
+                window.localStorage['user'] = angular.toJson(parsed);
+            }
+
         }
 
     }
@@ -144,12 +159,12 @@ angular.module('comrade.services', [])
             }
             return [];
         },
-        invalidate: function() {
-            window.localStorage['user'] = null;
-        },
         save: function(userData) {
             window.localStorage['user'] = angular.toJson(userData);
             console.log("DATA" + userData);
+        },
+        saveSocial: function(socialData, provider) {
+            window.localStorage[provider] = angular.toJson(socialData);
         }
     }
 })

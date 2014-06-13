@@ -1,10 +1,74 @@
 angular.module('comrade.controllers', [])
 
 
-.controller('MainController', function($scope, $window, $http, $ionicLoading, $state, $location, UserSession) {
+.controller('MainController', function($scope, $window, $http, $ionicLoading, $state, $location, UserSession, SocialAccounts) {
     $scope.$hasHeader=false;
-
+    var a = angular.fromJson(window.localStorage.getItem('user'));
+    console.log(a);
+    if (a) {
+        if (a.accessToken && a.id) {
+            $location.path('/loggedIn/dashboard');
+        }
+    }
     $scope.socialLogin = function(provider) {
+        $ionicLoading.show({
+            template: 'Logging in'
+        });
+        //TODO create function that grabs all current active providers, pulls that providers data and stores it locally before sending user to dashboard IF nothing exists in the localStorage
+        var retrieveStoreAndGo = function(userData) {
+            var hasFacebook = userData[0].facebookID ? true : false;
+            var hasTwitter = userData[0].twitterID ? true : false;
+            var hasGoogle = userData[0].googleID ? true : false;
+            var i = 0;
+            var l = 0;
+            UserSession.save(userData[0]);
+            if (hasFacebook) {
+                i++;
+                hello.login( 'facebook', options, function(auth){
+                    hello('facebook').api( '/me' ).success(function(r){
+                        UserSession.saveSocial(r, 'facebook');
+                        console.log(r);
+                        SocialAccounts.setSocialProfileImage('facebook', r.thumbnail);
+                        l++;
+                        if (l == i) {
+                            $ionicLoading.hide();
+                            $location.path('/loggedIn/dashboard');
+                        }
+                    });
+                });
+            }
+            if (hasTwitter) {
+                i++;
+                hello.login( 'twitter', options, function(auth){
+                    hello('twitter').api( '/me' ).success(function(r){
+                        UserSession.saveSocial(r, 'twitter');
+                        console.log(r);
+                        SocialAccounts.setSocialProfileImage('twitter', r.thumbnail);
+                        l++;
+                        if (l == i) {
+                            $ionicLoading.hide();
+                            $location.path('/loggedIn/dashboard');
+                        }
+                    });
+                });
+            }
+            if (hasGoogle) {
+                i++;
+                hello.login( 'google', options, function(auth){
+                    hello('google').api( '/me' ).success(function(r){
+                        UserSession.saveSocial(r, 'google');
+                        SocialAccounts.setSocialProfileImage('google', r.thumbnail);
+                        l++;
+                        if (l == i) {
+                            $ionicLoading.hide();
+                            $location.path('/loggedIn/dashboard');
+                        }
+                    });
+                });
+            }
+            console.log("we have this many social account" + i);
+
+        };
         var options = {};
         if (provider == "facebook") {
             options = {scope:'basic, friends, events, create_event, email, notifications'};
@@ -14,26 +78,25 @@ angular.module('comrade.controllers', [])
             options = {scope:'basic, friends, events, email'};
         } else if (provider == "linkedin") {
             options = {scope:'basic, friends, email', redirect_uri:'http://localhost:8100', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
-        }
+        };
         hello.login( provider, options, function(auth){
             hello(provider).api( '/me' ).success(function(r){
                 var firstName = r.first_name;
                 var lastName = r.last_name;
                 var baseURL = "http://localhost:1337";
-                $http({method: 'POST', url: baseURL + '/users/loginSocialAccount', data: {provider: auth.network, id: r.id, token: auth.authResponse.access_token, firstName: firstName, lastName: lastName}}).
+                $http({method: 'POST', url: baseURL + '/users/loginSocialAccount', data: {provider: auth.network, socialID: r.id, firstName: firstName, lastName: lastName}}).
                     success(function(data, status, headers, config) {
-                        console.log(data);
-
-                        UserSession.save(data);
-                        $location.path('/loggedIn/dashboard');
+                        retrieveStoreAndGo(data);
                     }).
                     error(function(data, status, headers, config) {
-                        console.log(data);
+                        $ionicLoading.hide();
                     });
             });
         });
 
     }
+
+
 })
 
 .controller('LoginController', function($scope, $http, $location) {
@@ -69,14 +132,14 @@ angular.module('comrade.controllers', [])
 .controller('DashboardController', function($scope, $http, $ionicModal, $location, UserSession, Notifications, SocialAccounts) {
     var baseURL = "http://localhost:1337";
     //TODO toggle switch for switching on or off different social accounts.
+
     $scope.UserData = UserSession.all();
     $scope.socialStatus = function (provider) {
         return SocialAccounts.getSocialStatus(provider);
     };
-    $scope.facebookNotifications = Notifications.getFacebookNotifications();
 
     $scope.logout = function() {
-        $http({method: 'POST', url: baseURL + '/users/logout', data: {id:angular.fromJson(window.localStorage['user'])[0].id} }).
+        $http({method: 'POST', url: baseURL + '/users/logout', data: {id:angular.fromJson(window.localStorage['user']).id} }).
             success(function(data, status, headers, config) {
                 console.log(data);
                 window.localStorage.clear();
@@ -114,15 +177,15 @@ angular.module('comrade.controllers', [])
         }
         hello.login( provider, options, function(auth){
             hello(provider).api( '/me' ).success(function(r){
-                SocialAccounts.saveSocialBasics(r, auth.network);
                 var baseURL = "http://localhost:1337";
-                var id = angular.fromJson(window.localStorage['user'])[0].id;
-                var acessToken = angular.fromJson(window.localStorage['user'])[0].accessToken;
+                var userData = window.localStorage.getItem('user');
+                var parsed = angular.fromJson(userData);
+                var id = parsed.id;
+                var acessToken = angular.fromJson(window.localStorage['user']).accessToken;
                 $http({method: 'POST', url: baseURL + '/users/linkSocialAccount', data: {provider: auth.network, id: id , socialID: r.id, token: acessToken, socialToken: auth.authResponse.access_token}}).
                     success(function(data, status, headers, config) {
-                        console.log(data);
-
-                        UserSession.save(data);
+                        UserSession.save(data[0]);
+                        SocialAccounts.setSocialProfileImage(provider, r.thumbnail);
                         $location.path('/loggedIn/dashboard');
                     }).
                     error(function(data, status, headers, config) {
@@ -196,9 +259,13 @@ angular.module('comrade.controllers', [])
 .controller('SettingsController', function ($scope) {
 })
 
-.controller('ComradesController', function($scope, Comrades) {
-    $scope.facebookComrades = Comrades.facebook();
-    $scope.facebookComrades = Comrades.google();
+.controller('ComradesController', function($scope, Comrades, SocialAccounts) {
+    function socialStatus(provider) {
+        return SocialAccounts.getSocialStatus(provider);
+    };
+    if (socialStatus('facebook')) { $scope.facebookComrades = Comrades.facebook() };
+    if (socialStatus('google')) { $scope.facebookComrades = Comrades.google() };
+    if (socialStatus('twitter')) { $scope.facebookComrades = Comrades.twitter() };
     $scope.comrades = Comrades.all();
 })
 
