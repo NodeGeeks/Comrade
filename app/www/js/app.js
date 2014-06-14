@@ -1,4 +1,4 @@
-angular.module('comrade', ['ionic', 'comrade.controllers', 'comrade.services'])
+angular.module('comrade', ['ionic', 'ngAnimate', 'comrade.controllers', 'comrade.services'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
