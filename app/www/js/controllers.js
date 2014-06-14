@@ -14,7 +14,6 @@ angular.module('comrade.controllers', [])
         $ionicLoading.show({
             template: 'Logging in'
         });
-        //TODO create function that grabs all current active providers, pulls that providers data and stores it locally before sending user to dashboard IF nothing exists in the localStorage
         var retrieveStoreAndGo = function(userData) {
             var hasFacebook = userData[0].facebookID ? true : false;
             var hasTwitter = userData[0].twitterID ? true : false;
@@ -24,10 +23,9 @@ angular.module('comrade.controllers', [])
             UserSession.save(userData[0]);
             if (hasFacebook) {
                 i++;
-                hello.login( 'facebook', options, function(auth){
+                hello.login( 'facebook', {display: 'none'}, function(auth){
                     hello('facebook').api( '/me' ).success(function(r){
                         UserSession.saveSocial(r, 'facebook');
-                        console.log(r);
                         SocialAccounts.setSocialProfileImage('facebook', r.thumbnail);
                         l++;
                         if (l == i) {
@@ -39,10 +37,9 @@ angular.module('comrade.controllers', [])
             }
             if (hasTwitter) {
                 i++;
-                hello.login( 'twitter', options, function(auth){
+                hello.login( 'twitter', {}, function(auth){
                     hello('twitter').api( '/me' ).success(function(r){
                         UserSession.saveSocial(r, 'twitter');
-                        console.log(r);
                         SocialAccounts.setSocialProfileImage('twitter', r.thumbnail);
                         l++;
                         if (l == i) {
@@ -54,7 +51,7 @@ angular.module('comrade.controllers', [])
             }
             if (hasGoogle) {
                 i++;
-                hello.login( 'google', options, function(auth){
+                hello.login( 'google', {}, function(auth){
                     hello('google').api( '/me' ).success(function(r){
                         UserSession.saveSocial(r, 'google');
                         SocialAccounts.setSocialProfileImage('google', r.thumbnail);
@@ -77,7 +74,7 @@ angular.module('comrade.controllers', [])
         } else if (provider == "google") {
             options = {scope:'basic, friends, events, email'};
         } else if (provider == "linkedin") {
-            options = {scope:'basic, friends, email', redirect_uri:'http://localhost:8100', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
+            options = {scope:'basic, friends, email', redirect_uri:'http://localhost:8100/', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         };
         hello.login( provider, options, function(auth){
             hello(provider).api( '/me' ).success(function(r){
@@ -92,6 +89,7 @@ angular.module('comrade.controllers', [])
                         $ionicLoading.hide();
                     });
             });
+            console.log(auth);
         });
 
     }
@@ -260,13 +258,45 @@ angular.module('comrade.controllers', [])
 })
 
 .controller('ComradesController', function($scope, Comrades, SocialAccounts) {
+    $scope.search = false;
+    $scope.isComrade = function (id) {
+        comradess = angular.fromJson(window.localStorage['comrades']);
+        for (var i=0;i<comradess.length;i++){
+            if (comradess[i].id==id && comradess[i].type == 'comrade'){
+                return true;
+            }
+        }
+        //var specificComrade = comradess.id[id];
+    };
+
+    $scope.isSocialComrade = function (id) {
+        comradess = angular.fromJson(window.localStorage['comrades']);
+        for (var i=0;i<comradess.length;i++){
+            if (comradess[i].id==id && comradess[i].type == 'social'){
+                return true;
+            }
+        }
+        //var specificComrade = comradess.id[id];
+    };
+
+    $scope.socialStatus = function (provider) {
+        return SocialAccounts.getSocialStatus(provider);
+    };
     function socialStatus(provider) {
         return SocialAccounts.getSocialStatus(provider);
     };
-    if (socialStatus('facebook')) { $scope.facebookComrades = Comrades.facebook() };
-    if (socialStatus('google')) { $scope.facebookComrades = Comrades.google() };
-    if (socialStatus('twitter')) { $scope.facebookComrades = Comrades.twitter() };
+    if (socialStatus('facebook')) {
+        $scope.facebookComrades = Comrades.facebook()
+    };
+    if (socialStatus('google')) {
+        $scope.facebookComrades = Comrades.google()
+    };
+    if (socialStatus('twitter')) {
+        $scope.facebookComrades = Comrades.twitter()
+
+    };
     $scope.comrades = Comrades.all();
+    $scope.predicate = '+name';
 })
 
 .controller('ComradeInfoController', function($scope, $stateParams, Comrades) {
