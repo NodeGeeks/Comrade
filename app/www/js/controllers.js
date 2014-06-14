@@ -4,7 +4,6 @@ angular.module('comrade.controllers', [])
 .controller('MainController', function($scope, $window, $http, $ionicLoading, $state, $location, UserSession, SocialAccounts) {
     $scope.$hasHeader=false;
     var a = angular.fromJson(window.localStorage.getItem('user'));
-    console.log(a);
     if (a) {
         if (a.accessToken && a.id) {
             $location.path('/loggedIn/dashboard');
@@ -51,7 +50,7 @@ angular.module('comrade.controllers', [])
             }
             if (hasGoogle) {
                 i++;
-                hello.login( 'google', {}, function(auth){
+                hello.login( 'google', { display: ''}, function(auth){
                     hello('google').api( '/me' ).success(function(r){
                         UserSession.saveSocial(r, 'google');
                         SocialAccounts.setSocialProfileImage('google', r.thumbnail);
@@ -72,7 +71,7 @@ angular.module('comrade.controllers', [])
         } else if (provider == "twitter") {
             options = {scope:'basic', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         } else if (provider == "google") {
-            options = {scope:'basic, friends, events, email'};
+            options = {scope:'basic, friends, events, email, offline_access', response_type:'code', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         } else if (provider == "linkedin") {
             options = {scope:'basic, friends, email', redirect_uri:'http://localhost:8100/', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         };
@@ -168,7 +167,7 @@ angular.module('comrade.controllers', [])
         } else if (provider == "twitter") {
             options = {scope:'basic', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         } else if (provider == "google") {
-            options = {scope:'basic, friends, events, email'};
+            options = {scope:'basic, friends, events, email, offline_access', response_type:'code', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         } else if (provider == "linkedin") {
             options = {scope:'basic, friends, email', redirect_uri:'http://localhost:8100', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         }
@@ -281,17 +280,14 @@ angular.module('comrade.controllers', [])
     };
 
     if ($scope.hasFacebook) {
-        $scope.facebookComrades = Comrades.facebook();
+        Comrades.facebook();
     };
     if ($scope.hasGoogle) {
-        $scope.googleComrades = Comrades.google();
+        Comrades.google();
     };
     if ($scope.hasTwitter) {
-        $scope.twitterComrades = Comrades.twitter();
+        Comrades.twitter();
 
-    };
-    $scope.moveToComrade = function(id) {
-        $state.go('comrade', { id: id} );
     };
     $scope.comrades = Comrades.all();
     $scope.predicate = '+name';
@@ -299,6 +295,10 @@ angular.module('comrade.controllers', [])
 
 .controller('ComradeInfoController', function($scope, $stateParams, Comrades) {
     $scope.comrade = Comrades.get($stateParams.id);
+})
+
+.controller('SpecMessageController', function($scope, $stateParams, Messages) {
+    $scope.message = Messages.get($stateParams.id);
 })
 
 .controller('EventsController', function($scope, Events) {
@@ -311,13 +311,13 @@ angular.module('comrade.controllers', [])
     $scope.hasTwitter = $scope.UserData.twitterID ? true : false;
     $scope.hasGoogle = $scope.UserData.googleID ? true : false;
     if ($scope.hasFacebook) {
-        $scope.facebookMessages = Messages.facebook();
+        Messages.facebook();
     };
     if ($scope.hasGoogle) {
-        //$scope.googleMessages = Messages.google();
+        //Messages.google();
     };
     if ($scope.hasTwitter) {
-        $scope.twitterMessages = Messages.twitter();
+        Messages.twitter();
 
     };
     $scope.messages = Messages.all();

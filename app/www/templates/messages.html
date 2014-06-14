@@ -4,7 +4,7 @@
 <ion-view title="Messages">
   <ion-content class="has-header">
     <ion-list>
-      <ion-item class="item-avatar" ng-repeat="message in messages" type="item-text-wrap" href="#/account/chatroom/{{message.id}}">
+      <ion-item class="item-avatar" ng-repeat="message in messages" type="item-text-wrap" ui-sref="loggedIn.specMessage({id:{{message.id}}})">
         <img src="{{message.thumbnail}}">
         <h2>{{message.name}}</h2>
         <p>{{message.text}}</p>

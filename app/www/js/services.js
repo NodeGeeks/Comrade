@@ -40,9 +40,7 @@ angular.module('comrade.services', [])
             };
 
         },
-        save: function() {
 
-        },
         google: function() {
             hello("google").api("me/friends" ).success( function( json ){
                 for (var i = 0; i < json.data.length; i++) {
@@ -58,7 +56,7 @@ angular.module('comrade.services', [])
                 }
             }).error( function(err){
                 if (err.error.code = 401) {
-                    hello.login('google', {}, function() {});
+                    hello('google').login();
                 }
             });
         },
@@ -174,11 +172,32 @@ angular.module('comrade.services', [])
 
   return {
     all: function() {
-      return messages;
+        messagess = angular.fromJson(window.localStorage['messages']);
+        return messagess;
     },
-    get: function(messageId) {
-      // Simple index lookup
-      return messages[messageId];
+    get: function(id) {
+      messagess = angular.fromJson(window.localStorage['messages']);
+      for (var i = 0; i < messagess.length; i++){
+          var obj = messagess[i];
+          console.log(obj);
+          if (obj.id == id) {
+              return obj;
+          }
+
+      };
+
+    },
+    getSpecMessage: function(object) {
+        console.log("THIS IS IT DO OR DIE"+object);
+      for (var i = 0; i < object.comments.data.length; i++){
+          var obj = object.comments.data[i];
+          console.log(obj);
+          if (obj.id == id) {
+              return obj;
+          }
+
+      };
+
     },
     twitter: function() {
       hello("twitter").api("me/messages" ).success( function( json ){
@@ -219,21 +238,6 @@ angular.module('comrade.services', [])
               hello("facebook").login();
           }
       });
-    },
-    facebookLoadChat: function() {
-        hello("facebook").api("me/messages" ).success( function( json ){
-            console.log(json);
-            for (var i = 0; i < json.data.length; i++) {
-                var obj = json.data[i];
-                messages = obj;
-            }
-        }).error( function(err){
-            console.log(err);
-            if( err.error.error_subcode == 463) {
-                hello("twitter").login();
-            }
-        });
-
     }
   }
 })
