@@ -44,7 +44,7 @@ angular.module('comrade.services', [])
                 }
             }).error( function(err){
                 if (err.error.code = 401) {
-                    hello.login('google', {display: 'none'}, function() {});
+                    hello.login('google', {}, function() {});
                 }
             });
         },
