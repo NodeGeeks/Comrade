@@ -128,13 +128,12 @@ angular.module('comrade.controllers', [])
 })
 
 .controller('DashboardController', function($scope, $http, $ionicModal, $location, UserSession, Notifications, SocialAccounts) {
+    $scope.UserData = UserSession.all();
+    $scope.hasFacebook = $scope.UserData.facebookID ? true : false;
+    $scope.hasTwitter = $scope.UserData.twitterID ? true : false;
+    $scope.hasGoogle = $scope.UserData.googleID ? true : false;
     var baseURL = "http://localhost:1337";
     //TODO toggle switch for switching on or off different social accounts.
-
-    $scope.UserData = UserSession.all();
-    $scope.socialStatus = function (provider) {
-        return SocialAccounts.getSocialStatus(provider);
-    };
 
     $scope.logout = function() {
         $http({method: 'POST', url: baseURL + '/users/logout', data: {id:angular.fromJson(window.localStorage['user']).id} }).
@@ -251,13 +250,17 @@ angular.module('comrade.controllers', [])
 })
 
 .controller('SocialAccountsController', function ($scope, SocialAccounts) {
-    $scope.socialAccounts = SocialAccounts.getSocialStatus();
+
 })
 
 .controller('SettingsController', function ($scope) {
 })
 
-.controller('ComradesController', function($scope, Comrades, SocialAccounts) {
+.controller('ComradesController', function($scope, Comrades, SocialAccounts, UserSession) {
+    $scope.UserData = UserSession.all();
+    $scope.hasFacebook = $scope.UserData.facebookID ? true : false;
+    $scope.hasTwitter = $scope.UserData.twitterID ? true : false;
+    $scope.hasGoogle = $scope.UserData.googleID ? true : false;
     $scope.search = false;
     $scope.isComrade = function (id) {
         comradess = angular.fromJson(window.localStorage['comrades']);
@@ -266,7 +269,6 @@ angular.module('comrade.controllers', [])
                 return true;
             }
         }
-        //var specificComrade = comradess.id[id];
     };
 
     $scope.isSocialComrade = function (id) {
@@ -276,23 +278,16 @@ angular.module('comrade.controllers', [])
                 return true;
             }
         }
-        //var specificComrade = comradess.id[id];
     };
 
-    $scope.socialStatus = function (provider) {
-        return SocialAccounts.getSocialStatus(provider);
+    if ($scope.hasFacebook) {
+        $scope.facebookComrades = Comrades.facebook();
     };
-    function socialStatus(provider) {
-        return SocialAccounts.getSocialStatus(provider);
+    if ($scope.hasGoogle) {
+        $scope.facebookComrades = Comrades.google();
     };
-    if (socialStatus('facebook')) {
-        $scope.facebookComrades = Comrades.facebook()
-    };
-    if (socialStatus('google')) {
-        $scope.facebookComrades = Comrades.google()
-    };
-    if (socialStatus('twitter')) {
-        $scope.facebookComrades = Comrades.twitter()
+    if ($scope.hasTwitter) {
+        $scope.facebookComrades = Comrades.twitter();
 
     };
     $scope.comrades = Comrades.all();

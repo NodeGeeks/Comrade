@@ -5,9 +5,9 @@
   <ion-content class="has-header">
     <ion-list>
       <ion-item class="item-avatar" ng-repeat="message in messages" type="item-text-wrap" href="#/account/chatroom/{{message.id}}">
-        <img src="img/ionic.png">
-        <h2>{{message.person}}</h2>
-        <p>{{message.short}}</p>
+        <img src="{{message.sender.profile_image_url}}">
+        <h2>{{message.sender.name}}</h2>
+        <p>{{message.text}}</p>
       </ion-item>
     </ion-list>
   </ion-content>

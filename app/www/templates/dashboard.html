@@ -4,16 +4,15 @@
         <button ng-click="openSettingsModal()" class="button button-icon icon ion-ios7-gear-outline pull-right"></button>
     </ion-nav-bar>
     <div class="bar bar-subheader">
-        <button ng-show="socialStatus('facebook')" ng-click="filterSocial('facebook')" class="button button-icon icon ion-social-facebook-outline"></button>
-        <button ng-show="socialStatus('google')" ng-click="filterSocial('google')" class="button button-icon icon ion-social-googleplus-outline"></button>
-        <button ng-show="socialStatus('twitter')" ng-click="filterSocial('twitter')" class="button button-icon icon ion-social-twitter-outline"></button>
-        <button ng-show="socialStatus('linkedin')" ng-click="filterSocial('linkedin')" class="button button-icon icon ion-social-linkedin-outline"></button>
+        <button ng-show="{{hasFacebook}}" ng-click="filterSocial('facebook')" class="button button-icon icon ion-social-facebook-outline"></button>
+        <button ng-show="{{hasGoogle}}" ng-click="filterSocial('google')" class="button button-icon icon ion-social-googleplus-outline"></button>
+        <button ng-show="{{hasTwitter}}" ng-click="filterSocial('twitter')" class="button button-icon icon ion-social-twitter-outline"></button>
         <button ng-click="openLinkMoreModal()" class="button button-icon icon ion-ios7-plus-empty"></button>
     </div>
     <div class="has-subheader social-bubble-holder">
-        <img class="social-bubble" src="{{UserData.facebookPic}}" ng-show="socialStatus('facebook')" >
-        <img class="social-bubble" src="{{UserData.googlePic}}" ng-show="socialStatus('google')" >
-        <img class="social-bubble" src="{{UserData.twitterPic}}" ng-show="socialStatus('twitter')" >
+        <img class="social-bubble" src="{{UserData.facebookPic}}" ng-show="{{hasFacebook}}" >
+        <img class="social-bubble" src="{{UserData.googlePic}}" ng-show="{{hasGoogle}}" >
+        <img class="social-bubble" src="{{UserData.twitterPic}}" ng-show="{{hasTwitter}}" >
     </div>
     <ion-content scroll="false" class="has-subheader force-relative">
 
@@ -34,10 +33,11 @@
         <ion-content>
             <ion-list>
                 <a class="item item-icon-left" href="#">
-                    <i class="icon ion-ionic"></i>
+                    <i class="icon ion-ios7-person-outline"></i>
                     Account Info
                 </a>
-                <li class="item item-toggle">
+                <li class="item item-icon-left item-toggle">
+                    <i class="icon ion-ios7-alarm-outline"></i>
                     Notifications
                     <label class="toggle toggle-assertive">
                         <input type="checkbox">
@@ -47,15 +47,11 @@
                     </label>
                 </li>
                 <a class="item item-icon-left" ng-click="openSocialAccountsModal()">
-                    <i class="icon ion-ionic"></i>
+                    <i class="icon ion-ios7-world-outline"></i>
                     Social Accounts
                 </a>
-                <a class="item item-icon-left" href="#">
-                    <i class="icon ion-ionic"></i>
-                    Terms of Service
-                </a>
                 <a class="item item-icon-left" ng-click="logout()">
-                    <i class="icon ion-ionic"></i>
+                    <i class="icon ion-log-out"></i>
                     Logout
                 </a>
             </ion-list>

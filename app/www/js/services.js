@@ -107,22 +107,7 @@ angular.module('comrade.services', [])
 
 .factory('SocialAccounts', function () {
     return {
-        getSocialStatus: function (provider) {
-            var active = function(provider){
-                var userData = localStorage.getItem('user');
-                var parsed = angular.fromJson(userData);
-                if (provider == "facebook") {
-                    if (parsed.facebookID) return true;
-                }
-                if (provider == "twitter") {
-                    if (parsed.twitterID) return true;
-                }
-                if (provider == "google") {
-                    if (parsed.googleID) return true;
-                }
-            };
-            return active(provider) ? true : false;
-        },
+
         setSocialProfileImage: function (provider, imgURL) {
             var userData = window.localStorage['user'];
             var parsed = angular.fromJson(userData);
@@ -184,10 +169,13 @@ angular.module('comrade.services', [])
     twitter: function() {
       hello("twitter").api("me/messages" ).success( function( json ){
           console.log(json);
+
           for (var i = 0; i < json.length; i++) {
               var obj = json[i];
-              messages = obj;
+              messages.push(obj);
+              window.localStorage['messages'] = angular.toJson(messages);
           }
+
       }).error( function(err){
           console.log(err);
           if( err.error.error_subcode == 463) {
