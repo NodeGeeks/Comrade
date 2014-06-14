@@ -386,8 +386,14 @@ hello.utils.extend( hello, {
 		if( parseInt(provider.oauth.version,10) === 1 ){
 			// Turn the request to the OAuth Proxy for 3-legged auth
 			url = utils.qs( opts.oauth_proxy, p.qs );
-		}
-		else{
+		} else if( opts.display === 'none' && provider.oauth.grant && session.refresh_token ){
+
+            // Add the refresh_token to the request
+            p.qs.refresh_token = session.refresh_token;
+
+            // Define the request path
+            url = utils.qs( opts.oauth_proxy, p.qs );
+        } else{
 			url = utils.qs( provider.oauth.auth, p.qs );
 		}
 
@@ -678,7 +684,6 @@ hello.utils.extend( hello.utils, {
 
 			// Local storage
 			var json = JSON.parse(localStorage.getItem('hello')) || {};
-
 			if(name && value === undefined){
 				return json[name] || null;
 			}
@@ -3907,12 +3912,18 @@ hello.init({
 				if(p.qs.display==='none'){
 					p.qs.display = '';
 				}
+                if(p.qs.response_type==='code'){
+
+                // Lets set this to an offline access to return a refresh_token
+                    p.qs.access_type = 'offline';
+      			}
 			},
 
 			// REF: http://code.google.com/apis/accounts/docs/OAuth2UserAgent.html
 			oauth : {
 				version : 2,
-				auth : "https://accounts.google.com/o/oauth2/auth"
+				auth : "https://accounts.google.com/o/oauth2/auth",
+                grant : "https://accounts.google.com/o/oauth2/token"
 			},
 
 			// Authorization scopes
