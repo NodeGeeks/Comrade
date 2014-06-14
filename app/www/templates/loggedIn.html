@@ -3,25 +3,25 @@
   Each tab's child <ion-nav-view> directive will have its own 
   navigation history that also transitions its views in and out.
 -->
-<ion-tabs class="tabs-dark tabs-icon-top">
+<ion-tabs class="tabs-dark tabs-icon-only">
 
-  <ion-tab title="Dashboard" icon="icon ion-ios7-speedometer-outline" icon-off="ion-ios7-speedometer-outline" icon-on="ion-ios7-speedometer" ui-sref="loggedIn.dashboard">
+  <ion-tab icon="icon ion-ios7-home-outline" icon-off="ion-ios7-home-outline" icon-on="ion-ios7-home" ui-sref="loggedIn.dashboard">
     <ion-nav-view name="dashboard"></ion-nav-view>
   </ion-tab>
 
-  <ion-tab title="Comrades" icon="icon ion-ios7-personadd-outline" icon-off="ion-ios7-personadd-outline" icon-on="ion-ios7-personadd" ui-sref="loggedIn.comrades">
+  <ion-tab icon="icon ion-ios7-person-outline" icon-off="ion-ios7-person-outline" icon-on="ion-ios7-person" ui-sref="loggedIn.comrades">
     <ion-nav-view name="comrades"></ion-nav-view>
   </ion-tab>
     
-  <ion-tab title="Messages" icon="icon ion-ios7-chatboxes-outline" icon-off="ion-ios7-chatboxes-outline" icon-on="ion-ios7-chatboxes" ui-sref="loggedIn.messages">
+  <ion-tab icon="icon ion-ios7-chatboxes-outline" icon-off="ion-ios7-chatboxes-outline" icon-on="ion-ios7-chatboxes" ui-sref="loggedIn.messages">
     <ion-nav-view name="messages"></ion-nav-view>
   </ion-tab>
 
-  <ion-tab title="Events" icon="icon ion-ios7-calendar-outline" icon-off="ion-ios7-calendar-outline" icon-on="ion-ios7-calendar" ui-sref="loggedIn.events">
+  <ion-tab icon="icon ion-ios7-calendar-outline" icon-off="ion-ios7-calendar-outline" icon-on="ion-ios7-calendar" ui-sref="loggedIn.events">
     <ion-nav-view name="events"></ion-nav-view>
   </ion-tab>
     
-  <ion-tab title="Places" icon="icon ion-ios7-location-outline" icon-off="ion-ios7-location-outline" icon-on="ion-ios7-location" ui-sref="loggedIn.places">
+  <ion-tab icon="icon ion-map" icon-off="ion-map" icon-on="ion-map" ui-sref="loggedIn.places">
     <ion-nav-view name="places"></ion-nav-view>
   </ion-tab>
 
