@@ -2856,8 +2856,17 @@ function formatMessages(o){
 
 function formatMessage(o){
     if(o.id){
-        o.thumbnail = o.picture = 'http://graph.facebook.com/'+o.to.data[0].id+'/picture?type=large';
-        o.name = o.to.data[0].name;
+        var currentUser = angular.fromJson(window.localStorage['user']);
+        var currentFacebookID = currentUser.facebookID;
+        if (o.to.data[0].id == currentFacebookID) {
+            o.thumbnail = o.picture = 'http://graph.facebook.com/'+o.to.data[1].id+'/picture?type=large';
+            o.name = o.to.data[1].name;
+        } else {
+            o.thumbnail = o.picture = 'http://graph.facebook.com/'+o.to.data[0].id+'/picture?type=large';
+            o.name = o.to.data[0].name;
+        }
+        var messageCount = o.comments.data.length - 1;
+        o.text = o.comments.data[messageCount].message;
     }
     return o;
 }
@@ -2967,7 +2976,7 @@ hello.init({
 			'me/photos' : 'me/photos',
 			'me/photo' : '@{id}',
             'me/notifications' : 'me/notifications',
-            'me/messages' : 'me/inbox'
+            'me/messages' : 'me/inbox?limit=10'
 
 			// PAGINATION
 			// https://developers.facebook.com/docs/reference/api/pagination/

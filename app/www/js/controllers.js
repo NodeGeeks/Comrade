@@ -68,7 +68,7 @@ angular.module('comrade.controllers', [])
         };
         var options = {};
         if (provider == "facebook") {
-            options = {scope:'basic, friends, events, create_event, email, notifications'};
+            options = {scope:'basic, friends, events, create_event, email, notifications, messages'};
         } else if (provider == "twitter") {
             options = {scope:'basic', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         } else if (provider == "google") {
