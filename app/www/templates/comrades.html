@@ -16,7 +16,7 @@
     <ion-content class="has-subheader">
 
         <ion-list can-swipe="true">
-            <ion-item class="item-avatar" ng-repeat="comrade in comrades | orderBy:predicate | filter:searchText " type="item-text-wrap" href="#/account/comrades/{{comrade.id}}">
+            <ion-item class="item-avatar" ng-repeat="comrade in comrades | orderBy:predicate | filter:searchText " type="item-text-wrap" ng-click="moveToComrade({{comrade.id}})">
                 <img src="{{comrade.thumbnail}}">
                 <h2>{{comrade.name}}</h2>
                 <i class="icon pull-right ion-social-{{comrade.provider}}"></i>

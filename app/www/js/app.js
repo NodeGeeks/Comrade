@@ -60,14 +60,12 @@ angular.module('comrade', ['ionic', 'ngAnimate', 'comrade.controllers', 'comrade
         }
     })
 
-    .state('loggedIn.comrade', {
-      url: '/comrade/:comradeId',
-      views: {
-        'comrade-info': {
-          templateUrl: 'templates/comrade-info.html',
-          controller: 'ComradeInfoController'
-        }
-      }
+    .state('comrade', {
+        url: '/comrade/:id',
+                templateUrl: 'templates/comrade.html',
+                controller: 'ComradeInfoController'
+
+
     })
 
     .state('loggedIn.events', {
@@ -85,6 +83,16 @@ angular.module('comrade', ['ionic', 'ngAnimate', 'comrade.controllers', 'comrade
             'messages': {
                 templateUrl: 'templates/messages.html',
                 controller: 'MessagesController'
+            }
+        }
+    })
+
+    .state('loggedIn.message', {
+        url: '/message/:id',
+        views: {
+            'message': {
+                templateUrl: 'templates/spec-message.html',
+                controller: 'SpecMessageController'
             }
         }
     })

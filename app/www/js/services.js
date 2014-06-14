@@ -10,6 +10,12 @@ angular.module('comrade.services', [])
     }
 })
 
+.factory('ComradeInfo', function() {
+    return {
+
+    }
+})
+
 .factory('Comrades', function() {
     // Might use a resource here that returns a JSON array
 
@@ -23,8 +29,16 @@ angular.module('comrade.services', [])
           comradess = angular.fromJson(window.localStorage['comrades']);
           return comradess;
         },
-        get: function(comradeId) {
-          return comrades[comradeId];
+        get: function(id) {
+            comradess = angular.fromJson(window.localStorage['comrades']);
+            for (var i = 0; i < comradess.length; i++){
+                var obj = comradess[i];
+                if (obj.id == id) {
+                    return obj;
+                }
+
+            };
+
         },
         save: function() {
 

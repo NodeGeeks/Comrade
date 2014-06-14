@@ -256,7 +256,7 @@ angular.module('comrade.controllers', [])
 .controller('SettingsController', function ($scope) {
 })
 
-.controller('ComradesController', function($scope, Comrades, SocialAccounts, UserSession) {
+.controller('ComradesController', function($scope, Comrades, SocialAccounts, UserSession, $state) {
     $scope.UserData = UserSession.all();
     $scope.hasFacebook = $scope.UserData.facebookID ? true : false;
     $scope.hasTwitter = $scope.UserData.twitterID ? true : false;
@@ -290,12 +290,15 @@ angular.module('comrade.controllers', [])
         $scope.twitterComrades = Comrades.twitter();
 
     };
+    $scope.moveToComrade = function(id) {
+        $state.go('comrade', { id: id} );
+    };
     $scope.comrades = Comrades.all();
     $scope.predicate = '+name';
 })
 
 .controller('ComradeInfoController', function($scope, $stateParams, Comrades) {
-    $scope.comrade = Comrades.get($stateParams.comradeId);
+    $scope.comrade = Comrades.get($stateParams.id);
 })
 
 .controller('EventsController', function($scope, Events) {
