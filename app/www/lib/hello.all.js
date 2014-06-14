@@ -2845,6 +2845,23 @@ function formatUser(o){
 	return o;
 }
 
+function formatMessages(o){
+    if("data" in o){
+        for(var i=0;i<o.data.length;i++){
+            formatMessage(o.data[i]);
+        }
+    }
+    return o;
+}
+
+function formatMessage(o){
+    if(o.id){
+        o.thumbnail = o.picture = 'http://graph.facebook.com/'+o.to.data[0].id+'/picture?type=large';
+        o.name = o.to.data[0].name;
+    }
+    return o;
+}
+
 function formatFriends(o){
 	if("data" in o){
 		for(var i=0;i<o.data.length;i++){
@@ -2853,6 +2870,7 @@ function formatFriends(o){
 	}
 	return o;
 }
+
 
 function format(o){
 	if("data" in o){
@@ -2978,7 +2996,7 @@ hello.init({
 			'me/following' : formatFriends,
 			'me/followers' : formatFriends,
             'me/notifications' : formatFriends,
-            'me/messages' : formatFriends,
+            'me/messages' : formatMessages,
 			'me/albums' : format,
 			'me/files' : format,
 			'default' : format
@@ -4464,6 +4482,21 @@ hello.init({
 //
 (function(hello){
 
+function formatMessages(o){
+    for(var i=0;i<o.length;i++){
+        formatMessage(o[i]);
+    }
+    return o;
+}
+
+function formatMessage(o){
+    if(o.id){
+        o.thumbnail = o.picture = o.sender.profile_image_url;
+        o.name = o.sender.name;
+    }
+    return o;
+}
+
 
 function formatUser(o){
 	if(o.id){
@@ -4590,7 +4623,7 @@ hello.init({
 			"me/friends" : formatFriends,
 			"me/followers" : formatFriends,
 			"me/following" : formatFriends,
-
+            "me/messages" : formatMessages,
 			"me/share" : function(res){
 				formaterror(res);
 				paging(res);

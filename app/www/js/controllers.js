@@ -284,10 +284,10 @@ angular.module('comrade.controllers', [])
         $scope.facebookComrades = Comrades.facebook();
     };
     if ($scope.hasGoogle) {
-        $scope.facebookComrades = Comrades.google();
+        $scope.googleComrades = Comrades.google();
     };
     if ($scope.hasTwitter) {
-        $scope.facebookComrades = Comrades.twitter();
+        $scope.twitterComrades = Comrades.twitter();
 
     };
     $scope.comrades = Comrades.all();
@@ -302,9 +302,22 @@ angular.module('comrade.controllers', [])
     $scope.events = Events.all();
 })
 
-.controller('MessagesController', function($scope, Messages) {
+.controller('MessagesController', function($scope, Messages, UserSession) {
+    $scope.UserData = UserSession.all();
+    $scope.hasFacebook = $scope.UserData.facebookID ? true : false;
+    $scope.hasTwitter = $scope.UserData.twitterID ? true : false;
+    $scope.hasGoogle = $scope.UserData.googleID ? true : false;
+    if ($scope.hasFacebook) {
+        $scope.facebookMessages = Messages.facebook();
+    };
+    if ($scope.hasGoogle) {
+        //$scope.googleMessages = Messages.google();
+    };
+    if ($scope.hasTwitter) {
+        $scope.twitterMessages = Messages.twitter();
+
+    };
     $scope.messages = Messages.all();
-    $scope.twitterMessages = Messages.twitter();
 })
 
 .controller('PlacesController', function($scope) {

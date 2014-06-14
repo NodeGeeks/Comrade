@@ -155,8 +155,8 @@ angular.module('comrade.services', [])
 })
 
 .factory('Messages', function () {
-  var messages = [ ];
-
+  var messages = [];
+  var uniqueIds = [];
 
   return {
     all: function() {
@@ -172,8 +172,11 @@ angular.module('comrade.services', [])
 
           for (var i = 0; i < json.length; i++) {
               var obj = json[i];
-              messages.push(obj);
-              window.localStorage['messages'] = angular.toJson(messages);
+              if (uniqueIds.indexOf(obj.id) == -1) {
+                  messages.push(obj);
+                  uniqueIds.push(obj.id);
+                  window.localStorage['messages'] = angular.toJson(messages);
+              }
           }
 
       }).error( function(err){
@@ -183,11 +186,31 @@ angular.module('comrade.services', [])
           }
       });
     },
-    twitterLoadChat: function() {
-        hello("twitter").api("me/messages" ).success( function( json ){
+    facebook: function() {
+      hello("facebook").api("me/messages" ).success( function( json ){
+          console.log(json);
+
+          for (var i = 0; i < json.data.length; i++) {
+              var obj = json.data[i];
+              if (uniqueIds.indexOf(obj.id) == -1) {
+                  messages.push(obj);
+                  uniqueIds.push(obj.id);
+                  window.localStorage['messages'] = angular.toJson(messages);
+              }
+          }
+
+      }).error( function(err){
+          console.log(err);
+          if( err.error.error_subcode == 463) {
+              hello("facebook").login();
+          }
+      });
+    },
+    facebookLoadChat: function() {
+        hello("facebook").api("me/messages" ).success( function( json ){
             console.log(json);
-            for (var i = 0; i < json.length; i++) {
-                var obj = json[i];
+            for (var i = 0; i < json.data.length; i++) {
+                var obj = json.data[i];
                 messages = obj;
             }
         }).error( function(err){
