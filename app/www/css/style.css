@@ -75,3 +75,11 @@
 .bar-search {
     margin-top: 88px;
 }
+
+.event-day-radio input:checked ~ .radio-icon {
+    visibility: hidden;
+}
+
+.event-day-radio .col {
+    padding: 0px;
+}
