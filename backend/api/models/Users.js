@@ -24,8 +24,12 @@ module.exports = {
             required: true,
             columnName: 'lastName'
         },
+        photoURL: {
+            type: 'string',
+            columnName: 'photoURL'
+        },
         phoneNumber: {
-            type: 'integer',
+            type: 'int',
             unique: true,
             columnName: 'phoneNumber'
         },
@@ -36,7 +40,7 @@ module.exports = {
         },
         activated: {
             type: 'boolean',
-            defaultsTo: 'false',
+            defaultsTo: false,
             columnName: 'activated'
         },
         password: {
@@ -61,7 +65,6 @@ module.exports = {
             type: 'string',
             columnName: 'twitterID'
         },
-
         googleID: {
             type: 'string',
             columnName: 'googleID'
@@ -69,6 +72,12 @@ module.exports = {
         linkedInID: {
             type: 'string',
             columnName: 'linkedInID'
+        },
+        toJSON: function() {
+            var obj = this.toObject();
+            delete obj.activationToken;
+            delete obj.password;
+            return obj;
         }
     },
 
@@ -85,15 +94,15 @@ module.exports = {
                         bcrypt.genSalt(10, function(err, salt) {
                             if (err) return next(err);
 
-                            bcrypt.hash(val.password, salt, function() {} , function(err, hash) {
+                            bcrypt.hash(val.password, salt, function() {} , function(err, hash1) {
                                 if (err) return next(err);
-                                val.activationToken = hash
+                                val.activationToken = hash1
                                 if (val.email) {
                                     var mailOptions = {
                                         from: 'aaron@teknologenie.com',
                                         to: val.email,
                                         subject: 'Comrade Account Verficiation',
-                                        text: 'In order to use your Comrade account please follow the link bellow to verify your email address and activate your account /n /n https://comradeapp.com/users/activate?email='+val.email+'&activationToken='+hash+''
+                                        text: 'In order to use your Comrade account please follow the link bellow to verify your email address and activate your account /n /n https://comradeapp.com/users/activate?email='+val.email+'&activationToken='+hash1+''
                                     };
                                     var mail = require("nodemailer").mail;
                                     mail(mailOptions);
@@ -114,7 +123,7 @@ module.exports = {
     },
 
     afterCreate: function (val, next) {
-
+        //TODO after user is created, if it was done with a social account check which socialID of that provider exists and make them Comrades, also notify the end user that they gained a new Comrade
     }
 };
 

@@ -8,21 +8,35 @@
 module.exports = {
     login: function (req, res) {
         var bcrypt = require('bcrypt-nodejs');
-        Users.findOneByEmail(req.body.email).exec(function (err, user) {
-            if (err) res.json({ error: 'DB error' }, 500);
+        var thingToEncrypt = "comrade" + _.random(598, 78905478) + req.body.username + _.random(23, 8300000000);
+        Users.findOne({email: req.body.email}).exec(function (err, user) {
+            if (err) res.serverError({ error: 'DB error' }, 500);
 
             if (user) {
                 bcrypt.compare(req.body.password, user.password, function (err, match) {
-                    if (err) res.json({ error: 'Server error' }, 500);
+                    if (err) res.serverError({ error: 'Server error' }, 500);
 
                     if (match) {
-                        // password match
                         req.session.user = user.id;
-                        res.json(user);
+                        bcrypt.genSalt(10, function(err, salt) {
+                            if (err) return next(err);
+
+                            bcrypt.hash(thingToEncrypt, salt, function () {}, function (err, hash) {
+                                if (err) return next(err);
+                                var accessToken = hash;
+                                Users.update({id: user.id}, {accessToken: accessToken}).exec(function afterwards(err, updated) {
+                                    if (err) {
+                                        res.serverError(err);
+                                    }
+                                    if (updated) {
+                                        res.json(updated);
+                                    }
+                                });
+                            });
+                        });
                     } else {
-                        // invalid password
                         if (req.session.user) req.session.user = null;
-                        res.json({ error: 'Invalid password' }, 400);
+                        res.serverError({ error: 'Invalid password' }, 401);
                     }
                 });
             } else {
@@ -38,24 +52,14 @@ module.exports = {
     },
 
     signup: function (req, res) {
-        var bcrypt = require('bcrypt-nodejs');
-        bcrypt.genSalt(10, function(err, salt) {
-            if (err) return next(err);
+        Users.create({ comradeUsername: req.body.username, firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, password: req.body.password}).exec(function (err, user) {
 
-            bcrypt.hash(req.body.password, salt, function () {}, function (err, hash) {
-                if (err) return next(err);
-                req.body.password = hash;
-                Users.create({ comradeUsername: req.body.username, firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, password: req.body.password}).exec(function (err, user) {
-                    if (err) res.json({ error: 'DB error' }, 500);
-
-                    if (user) {
-                        res.json(user);
-                    } else {
-                        res.json({ error: 'Could not create user' }, 404);
-                        //TODO give better reason on why the user was unable to be created
-                    }
-                });
-            });
+            if (user) {
+                res.json(user);
+            } else if (err) {
+                res.serverError({ error: 'Could not create user' }, 404);
+                //TODO give better reason on why the user was unable to be created
+            }
         });
 
     },
@@ -78,11 +82,7 @@ module.exports = {
         var lastName = req.body.lastName;
         var accessToken = "invalidFromLogin";
         var bcrypt = require('bcrypt-nodejs');
-        function randomNum(min, max) {
-            return Math.random() * (max - min) + min;
-        };
-
-        var thingToEncrypt = "comrade" + randomNum(598, 78905478) + socialID + randomNum(23, 8300000000);
+        var thingToEncrypt = "comrade" + _.random(598, 78905478) + socialID + _.random(23, 8300000000);
         bcrypt.genSalt(10, function(err, salt) {
             if (err) return next(err);
 
@@ -111,7 +111,7 @@ module.exports = {
                         if (record) {
                             Users.update({googleID: socialID}, {accessToken: accessToken}).exec(function afterwards(err,updated){
                                 if (err) {
-                                    res.json(err);
+                                    res.serverError(err);
                                 }
                                 if (updated) {
                                     res.json(updated);

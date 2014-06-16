@@ -7,8 +7,51 @@
 
 module.exports = {
 
-  attributes: {
+    tableName: 'places',
+    schema: true,
+    attributes: {
+        userID: {
+            type: 'int',
+            required: true,
+            columnName: 'userID'
+        },
+        name: {
+            type: 'string',
+            required: true,
+            columnName: 'name'
+        },
+        longitude: {
+            type: 'float',
+            columnName: 'longitude'
+        },
+        latitude: {
+            type: 'float',
+            columnName: 'latitude'
+        },
+        address: {
+            type: 'string',
+            columnName: 'address'
+        },
+        postal: {
+            type: 'int',
+            columnName: 'postal'
+        },
+        description: {
+            type: 'text',
+            columnName: 'description'
+        },
+        visitCount: {
+            type: 'int',
+            columnName: 'visitCount'
+        },
+        photoURL: {
+            type: 'string',
+            columnName: 'photoURL'
+        }
+    },
 
-  }
+    beforeCreate: function(val, next) {
+
+    }
 };
 
