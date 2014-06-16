@@ -24,6 +24,10 @@ module.exports = {
             defaultsTo: 0,
             columnName: 'comrades'
         }
+    },
+
+    beforeCreate: function(val, next) {
+
     }
 };
 
