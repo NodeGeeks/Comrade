@@ -1168,7 +1168,7 @@ hello.utils.extend( hello.utils, {
 				popup.addEventListener('loadstart', function(e){
 
 					var url = e.url;
-
+                    console.log(url);
 					// Is this the path, as given by the redirect_uri?
 					if(url.indexOf(redirect_uri)!==0){
 						return;
@@ -1219,6 +1219,25 @@ hello.utils.extend( hello.utils, {
 					// Opener - the parent window which opened this, aka this script
 					hello.utils.responseHandler( _popup, window );
 				});
+
+                popup.addEventListener('loadstop', function(event) {
+                    var access_token = event.url.match(/(?:#|#.+&)access_token=([^&]+)/)[1];
+                    var error = event.url.split("error=")[1];
+                    if (access_token || error) {
+                        if (!access_token) {
+                            if (error) {
+                                console.log(error);
+                            }
+                        } else {
+                        }
+                    }
+                })
+                popup.addEventListener('loaderror', function(data){
+                    console.log(data);
+                })
+                popup.addEventListener('exit', function(data){
+                    console.log(data);
+                })
 			}
 
 
