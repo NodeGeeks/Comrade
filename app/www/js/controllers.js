@@ -3,10 +3,11 @@ angular.module('comrade.controllers', [])
 
 .controller('MainController', function($scope, $window, $http, $ionicLoading, $state, $location, UserSession, SocialAccounts) {
     $scope.$hasHeader=false;
+
     $scope.socialLogin = function(provider) {
-        $ionicLoading.show({
-            template: 'Logging in'
-        });
+        //$ionicLoading.show({
+         //   template: 'Logging in'
+        //});
         var retrieveStoreAndGo = function(userData) {
             var hasFacebook = userData[0].facebookID ? true : false;
             var hasTwitter = userData[0].twitterID ? true : false;
@@ -16,8 +17,10 @@ angular.module('comrade.controllers', [])
             UserSession.save(userData[0]);
             if (hasFacebook) {
                 i++;
-                hello.login( 'facebook', {display: 'none'}, function(auth){
+                hello.login( 'facebook', {redirect_uri: 'http://localhost/'}, function(auth){
+                    console.log(auth);
                     hello('facebook').api( '/me' ).success(function(r){
+                        console.log(r);
                         UserSession.saveSocial(r, 'facebook');
                         SocialAccounts.setSocialProfileImage('facebook', r.thumbnail);
                         l++;
@@ -30,7 +33,7 @@ angular.module('comrade.controllers', [])
             }
             if (hasTwitter) {
                 i++;
-                hello.login( 'twitter', {}, function(auth){
+                hello.login( 'twitter', {redirect_uri: 'http://localhost/'}, function(auth){
                     hello('twitter').api( '/me' ).success(function(r){
                         UserSession.saveSocial(r, 'twitter');
                         SocialAccounts.setSocialProfileImage('twitter', r.thumbnail);
@@ -44,7 +47,7 @@ angular.module('comrade.controllers', [])
             }
             if (hasGoogle) {
                 i++;
-                hello.login( 'google', { display: ''}, function(auth){
+                hello.login( 'google', { redirect_uri: 'http://localhost/'}, function(auth){
                     hello('google').api( '/me' ).success(function(r){
                         UserSession.saveSocial(r, 'google');
                         SocialAccounts.setSocialProfileImage('google', r.thumbnail);
@@ -61,13 +64,13 @@ angular.module('comrade.controllers', [])
         };
         var options = {};
         if (provider == "facebook") {
-            options = {scope:'basic, friends, events, create_event, email, notifications, messages'};
+            options = {scope:'basic, friends, events, create_event, email, notifications, messages', redirect_uri: 'http://localhost/'};
         } else if (provider == "twitter") {
-            options = {scope:'basic', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
+            options = {scope:'basic', oauth_proxy: 'https://auth-server.herokuapp.com/proxy', redirect_uri: 'http://localhost/'};
         } else if (provider == "google") {
-            options = {scope:'basic, friends, events, email, offline_access', response_type:'code', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
+            options = {scope:'basic, friends, events, email, offline_access', response_type:'code', oauth_proxy: 'https://auth-server.herokuapp.com/proxy', redirect_uri: 'http://localhost/'};
         } else if (provider == "linkedin") {
-            options = {scope:'basic, friends, email', redirect_uri:'http://localhost:8100/', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
+            options = {scope:'basic, friends, email', redirect_uri:'http://localhost/', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         };
         hello.login( provider, options, function(auth){
             hello(provider).api( '/me' ).success(function(r){
@@ -157,13 +160,13 @@ angular.module('comrade.controllers', [])
     $scope.linkSocialAccount = function(provider) {
         var options = {};
         if (provider == "facebook") {
-            options = {scope:'basic, friends, events, create_event, email, notifications'};
+            options = {scope:'basic, friends, events, create_event, email, notifications', redirect_uri: 'http://localhost/'};
         } else if (provider == "twitter") {
-            options = {scope:'basic', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
+            options = {scope:'basic', oauth_proxy: 'https://auth-server.herokuapp.com/proxy', redirect_uri: 'http://localhost/'};
         } else if (provider == "google") {
-            options = {scope:'basic, friends, events, email, offline_access', response_type:'code', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
+            options = {scope:'basic, friends, events, email, offline_access', redirect_uri: 'http://localhost/', response_type:'code', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         } else if (provider == "linkedin") {
-            options = {scope:'basic, friends, email', redirect_uri:'http://localhost:8100', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
+            options = {scope:'basic, friends, email', redirect_uri: 'http://localhost/', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         }
         hello.login( provider, options, function(auth){
             hello(provider).api( '/me' ).success(function(r){
@@ -304,6 +307,7 @@ angular.module('comrade.controllers', [])
         $scope.$on("$destroy", function(){
             $animate.removeClass($('#main-tabs'), 'tabs-item-hide');
         });
+        socket.on('message', function(data) {console.log("Global message: ", data.msg)});
 
 })
 

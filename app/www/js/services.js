@@ -151,10 +151,10 @@ angular.module('comrade.services', [])
     return {
         all: function() {
             var userData = window.localStorage['user'];
+            console.log(userData);
             if(userData) {
                 return angular.fromJson(userData);
-            }
-            return [];
+            } else {return [];}
         },
         save: function(userData) {
             window.localStorage['user'] = angular.toJson(userData);
@@ -239,7 +239,7 @@ angular.module('comrade.services', [])
       }).error( function(err){
           console.log(err);
           if( err.error.error_subcode == 463) {
-              hello("twitter").login();
+              hello.login('twitter',{redirect_uri: 'http://localhost'});
           }
       });
     },
@@ -259,7 +259,7 @@ angular.module('comrade.services', [])
       }).error( function(err){
           console.log(err);
           if( err.error.error_subcode == 463) {
-              hello("facebook").login();
+              hello.login('facebook',{redirect_uri: 'http://localhost'});
           }
       });
     }
