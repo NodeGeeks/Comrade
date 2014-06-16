@@ -146,7 +146,7 @@ angular.module('comrade.services', [])
 })
 
 
-.factory('UserSession', function () {
+.factory('UserSession', function UserSession() {
     //TODO for developmement its okay to use standar localStorage but for product we want to use 'angular-local-storage' git repo by 'grevory'
     return {
         all: function() {
@@ -164,6 +164,30 @@ angular.module('comrade.services', [])
             window.localStorage[provider] = angular.toJson(socialData);
         }
     }
+})
+
+.factory('sockets', function sockets($rootScope) {
+    var socket = io.connect('http://localhost:1337');
+    return {
+        on: function (eventName, callback) {
+            socket.on(eventName, function () {
+                var args = arguments;
+                $rootScope.$apply(function () {
+                    callback.apply(socket, args);
+                });
+            });
+        },
+        emit: function (eventName, data, callback) {
+            socket.emit(eventName, data, function () {
+                var args = arguments;
+                $rootScope.$apply(function () {
+                    if (callback) {
+                        callback.apply(socket, args);
+                    }
+                });
+            })
+        }
+    };
 })
 
 .factory('Messages', function () {

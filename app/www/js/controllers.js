@@ -3,12 +3,6 @@ angular.module('comrade.controllers', [])
 
 .controller('MainController', function($scope, $window, $http, $ionicLoading, $state, $location, UserSession, SocialAccounts) {
     $scope.$hasHeader=false;
-    var a = angular.fromJson(window.localStorage.getItem('user'));
-    if (a) {
-        if (a.accessToken && a.id) {
-            $location.path('/loggedIn/dashboard');
-        }
-    }
     $scope.socialLogin = function(provider) {
         $ionicLoading.show({
             template: 'Logging in'
@@ -301,6 +295,18 @@ angular.module('comrade.controllers', [])
     $scope.message = Messages.get($stateParams.id);
 })
 
+.controller('ChatController', function($scope, $stateParams, sockets, Comrades, UserSession, $animate) {
+        $animate.addClass($('#main-tabs'), 'tabs-item-hide');
+        $scope.comrade = Comrades.get($stateParams.id);
+        $scope.conversation = [];
+
+        sockets.emit('user', {id: UserSession.all().id, friendID: $stateParams.id});
+        $scope.$on("$destroy", function(){
+            $animate.removeClass($('#main-tabs'), 'tabs-item-hide');
+        });
+
+})
+
 .controller('EventsController', function($scope, Events) {
     $scope.events = Events.all();
 })
@@ -325,4 +331,23 @@ angular.module('comrade.controllers', [])
 
 .controller('PlacesController', function($scope) {
 
+})
+
+.controller('LoadingController', function($scope, $location, $http) {
+    var a = angular.fromJson(window.localStorage.getItem('user'));
+    if (a) {
+        if (a.accessToken && a.id) {
+            $http({method: 'POST', url: 'http://localhost:1337/users/checkAuthToken', data: {id: a.id, token: a.accessToken}}).
+                success(function(data, status, headers, config) {
+                    alert(data);
+                    $location.path('/loggedIn/dashboard');
+                }).
+                error(function(data, status, headers, config) {
+                    $location.path('/main');
+                });
+
+        }
+    } else if (!a) {
+        $location.path('/main');
+    }
 });

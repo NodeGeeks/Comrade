@@ -17,15 +17,25 @@ module.exports.sockets = {
   // Keep in mind that Sails' RESTful simulation for sockets
   // mixes in socket.io events for your routes and blueprints automatically.
   onConnect: function(session, socket) {
-
-    // By default, do nothing.
-
+      socket.on('user', function (log) {
+          console.log(log);
+      })
+      console.log(session);
+      if (session.user) {
+          var roomName = 'loggedIn'+session.user.id;
+          sails.sockets.join(socket, roomName);
+          // If this is the first subscriber, the user is just coming online,
+          // so notify any subscribers about the state change.
+          if (sails.sockets.subscribers(roomName).length == 1) {
+              User.message(session.user.id, {state: 'online'}, socket);
+          }
+      }
   },
 
   // This custom onDisconnect function will be run each time a socket disconnects
   onDisconnect: function(session, socket) {
 
-    // By default: do nothing.
+
   },
 
 
@@ -39,7 +49,8 @@ module.exports.sockets = {
     'websocket',
     'htmlfile',
     'xhr-polling',
-    'jsonp-polling'
+    'jsonp-polling',
+    'flashsocket'
   ],
 
 
