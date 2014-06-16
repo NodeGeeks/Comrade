@@ -1,6 +1,7 @@
 angular.module('comrade', ['ionic', 'ngAnimate', 'comrade.controllers', 'comrade.services'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $http) {
+
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -14,6 +15,12 @@ angular.module('comrade', ['ionic', 'ngAnimate', 'comrade.controllers', 'comrade
 .config(function($stateProvider, $urlRouterProvider) {
 
     $stateProvider
+
+    .state('loading', {
+        url: "/",
+        templateUrl: "templates/loading.html",
+        controller: 'LoadingController'
+    })
 
     .state('main', {
         url: "/main",
@@ -89,7 +96,15 @@ angular.module('comrade', ['ionic', 'ngAnimate', 'comrade.controllers', 'comrade
             }
         }
     })
-
+    .state('loggedIn.chatRoom', {
+        url: '/chatRoom/:id',
+        views: {
+            'comrades': {
+                templateUrl: 'templates/chatRoom.html',
+                controller: 'ChatController'
+            }
+        }
+    })
     .state('loggedIn.specMessage', {
         url: '/specMessage/:id',
         views: {
@@ -110,7 +125,7 @@ angular.module('comrade', ['ionic', 'ngAnimate', 'comrade.controllers', 'comrade
     });
 
 
-    $urlRouterProvider.otherwise('/main');
+    $urlRouterProvider.otherwise('/');
 
 });
 
