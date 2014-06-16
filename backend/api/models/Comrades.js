@@ -11,28 +11,17 @@ module.exports = {
     schema: false,
     attributes: {
         userID: {
-            type: 'int',
-            required: true,
+            type: 'integer',
+            primaryKey: true,
             columnName: 'userID'
         },
-        comradePhoto: {
-            type: 'string',
-            columnName: 'comradePhoto'
-        },
         comradeID: {
-            type: 'int',
-            required: true,
+            type: 'integer',
             columnName: 'comradeID'
         },
-        onlineStatus: {
-            type: 'string',
-            defaultsTo: 'offline',
-            enum: ['offline','online']
-        },
         comrades: {
-            type: 'string',
-            defaultsTo: 'pending',
-            enum: ['pending', 'approved', 'denied', 'blocked', 'ignored'],
+            type: 'integer',
+            defaultsTo: 0,
             columnName: 'comrades'
         }
     },

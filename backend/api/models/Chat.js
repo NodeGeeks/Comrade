@@ -8,13 +8,6 @@
 module.exports = {
 
   attributes: {
-      openChat: function(req, res) {
-          var room = req.param('room');
-
-          // If request from WebSocket, this method is exist.
-          req.socket.join(room);
-      }
-
 
   }
 };

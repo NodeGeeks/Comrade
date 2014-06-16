@@ -5,7 +5,9 @@ angular.module('comrade.controllers', [])
     $scope.$hasHeader=false;
 
     $scope.socialLogin = function(provider) {
-
+        //$ionicLoading.show({
+         //   template: 'Logging in'
+        //});
         var retrieveStoreAndGo = function(userData) {
             var hasFacebook = userData[0].facebookID ? true : false;
             var hasTwitter = userData[0].twitterID ? true : false;
@@ -71,13 +73,10 @@ angular.module('comrade.controllers', [])
             options = {scope:'basic, friends, email', redirect_uri:'http://localhost/', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         };
         hello.login( provider, options, function(auth){
-            $ionicLoading.show({
-                template: 'Loading'
-            });
             hello(provider).api( '/me' ).success(function(r){
                 var firstName = r.first_name;
                 var lastName = r.last_name;
-                var baseURL = "http://192.168.1.127:1337";
+                var baseURL = "http://localhost:1337";
                 $http({method: 'POST', url: baseURL + '/users/loginSocialAccount', data: {provider: auth.network, socialID: r.id, firstName: firstName, lastName: lastName}}).
                     success(function(data, status, headers, config) {
                         retrieveStoreAndGo(data);
@@ -94,14 +93,14 @@ angular.module('comrade.controllers', [])
 
 })
 
-.controller('LoginController', function($scope, $http, $location, UserSession) {
-    var baseURL = "http://192.168.1.127:1337";
+.controller('LoginController', function($scope, $http, $location) {
+    var baseURL = "http://localhost:1337";
     $scope.login = function(loginData) {
         console.log(loginData);
 
         $http({method: 'POST', url: baseURL + '/users/login', data: loginData}).
             success(function(data, status, headers, config) {
-                UserSession.save(data);
+                alert(JSON.stringify(data));
                 $location.path('/loggedIn/dashboard');
             }).
             error(function(data, status, headers, config) {
@@ -111,7 +110,7 @@ angular.module('comrade.controllers', [])
 })
 
 .controller('SignupController', function($scope, $http, $location) {
-    var baseURL = "http://192.168.1.127:1337";
+    var baseURL = "http://localhost:1337";
     $scope.signup = function(signupData) {
         console.log(signupData);
         $http({method: 'POST', url: baseURL + '/users/signup', data: signupData}).
@@ -129,7 +128,7 @@ angular.module('comrade.controllers', [])
     $scope.hasFacebook = $scope.UserData.facebookID ? true : false;
     $scope.hasTwitter = $scope.UserData.twitterID ? true : false;
     $scope.hasGoogle = $scope.UserData.googleID ? true : false;
-    var baseURL = "http://192.168.1.127:1337";
+    var baseURL = "http://localhost:1337";
     //TODO toggle switch for switching on or off different social accounts.
 
     $scope.logout = function() {
@@ -171,7 +170,7 @@ angular.module('comrade.controllers', [])
         }
         hello.login( provider, options, function(auth){
             hello(provider).api( '/me' ).success(function(r){
-                var baseURL = "http://192.168.1.127:1337";
+                var baseURL = "http://localhost:1337";
                 var userData = window.localStorage.getItem('user');
                 var parsed = angular.fromJson(userData);
                 var id = parsed.id;
@@ -342,7 +341,7 @@ angular.module('comrade.controllers', [])
     var a = angular.fromJson(window.localStorage.getItem('user'));
     if (a) {
         if (a.accessToken && a.id) {
-            $http({method: 'POST', url: 'http://192.168.1.127:1337/users/checkAuthToken', data: {id: a.id, token: a.accessToken}}).
+            $http({method: 'POST', url: 'http://localhost:1337/users/checkAuthToken', data: {id: a.id, token: a.accessToken}}).
                 success(function(data, status, headers, config) {
                     alert(data);
                     $location.path('/loggedIn/dashboard');

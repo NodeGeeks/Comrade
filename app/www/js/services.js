@@ -167,7 +167,7 @@ angular.module('comrade.services', [])
 })
 
 .factory('sockets', function sockets($rootScope) {
-    var socket = io.connect('http://192.168.1.127:1337');
+    var socket = io.connect('http://localhost:1337');
     return {
         on: function (eventName, callback) {
             socket.on(eventName, function () {

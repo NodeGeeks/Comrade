@@ -6,47 +6,9 @@
 */
 
 module.exports = {
-    tableName: 'requests',
-    schema: true,
-    attributes: {
-        userID: {
-            type: 'int',
-            required: true,
-            columnName: 'userID'
-        },
-        comradeID: {
-            type: 'int',
-            required: true,
-            columnName: 'comradeID'
-        },
-        requestType: {
-            type: 'string',
-            enum: ['invite','find'],
-            required: true,
-            columnName: 'requestType'
-        },
-        longitude: {
-            type: 'float',
-            columnName: 'longitude'
-        },
-        latitude: {
-            type: 'float',
-            columnName: 'latitude'
-        },
-        memo: {
-            type: 'text',
-            columnName: 'memo'
-        },
-        expires: {
-            type: 'datetime',
-            columnName: 'expires'
-        },
-        status: {
-            type: 'string',
-            enum: ['expired', 'pending', 'found', 'driving', 'denied', 'arrived', 'accepted'],
-            defaultsTo: 'pending',
-            columnName: 'status'
-        }
-    }
+
+  attributes: {
+
+  }
 };
 
