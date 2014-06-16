@@ -7,8 +7,38 @@
 
 module.exports = {
 
-  attributes: {
+    tableName: 'events',
+    schema: true,
+    attributes: {
+        name: {
+            type: 'string',
+            required: true,
+            columnName: 'name'
+        },
+        hostUserID: {
+            type: 'int',
+            required: true,
+            columnName: 'hostUserID'
+        },
+        beginTimestamp: {
+            type: 'datetime',
+            required: true,
+            columnName: 'beginTimestamp'
+        },
+        endTimestamp: {
+            type: 'datetime',
+            required: true,
+            columnName: 'endTimestamp'
+        },
+        invited: {
+            type: 'array',
+            columnName: 'invited'
+        },
+        attending: {
+            type: 'array',
+            columnName: 'attending'
+        }
 
-  }
+    }
 };
 

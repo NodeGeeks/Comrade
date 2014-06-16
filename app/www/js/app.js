@@ -1,6 +1,6 @@
-angular.module('comrade', ['ionic', 'ngAnimate', 'comrade.controllers', 'comrade.services'])
+angular.module('comrade', ['ionic', 'ngAnimate', 'comrade.controllers', 'comrade.services', 'ngCordova'])
 
-.run(function($ionicPlatform, $http) {
+.run(function($ionicPlatform) {
 
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {

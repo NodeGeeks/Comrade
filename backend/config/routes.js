@@ -59,6 +59,61 @@ module.exports.routes = {
     'post /users/activateAccount': {
         controller: 'users',
         action: 'activateAccount'
+    },
+
+    'post /comrades/comrades': {
+        controller: 'comrades',
+        action: 'comrades'
+    },
+
+    'post /comrades/sendComradesRequest': {
+        controller: 'comrades',
+        action: 'sendComradesRequest'
+    },
+
+    'post /comrades/ignoreComradesRequest': {
+        controller: 'comrades',
+        action: 'ignoreComradesRequest'
+    },
+
+    'post /comrades/acceptComradesRequest': {
+        controller: 'comrades',
+        action: 'acceptComradesRequest'
+    },
+
+    'post /comrades/denyComradesRequest': {
+        controller: 'comrades',
+        action: 'denyComradesRequest'
+    },
+
+    'post /comrades/blockComrade': {
+        controller: 'comrades',
+        action: 'blockComrade'
+    },
+
+    'post /requests/requests': {
+        controller: 'requests',
+        action: 'requests'
+    },
+
+    'post /requests/invite': {
+        controller: 'requests',
+        action: 'invite'
+    },
+
+    'post /requests/find': {
+        controller: 'requests',
+        action: 'find'
+    },
+
+    'post /requests/respondToInvite': {
+        controller: 'requests',
+        action: 'respondToInvite'
+    },
+
+    'post /requests/respondToFind': {
+        controller: 'requests',
+        action: 'respondToFind'
     }
 
   // Custom routes here...
