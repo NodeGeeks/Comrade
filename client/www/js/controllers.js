@@ -297,7 +297,30 @@ angular.module('comrade.controllers', [])
         // Execute action
     });
 
+    $scope.change = function(a) {
+        if (a === false) {
+            alert(1);
+        }
+        if (a === true) {
+            alert(2);
+        }
+    };
+    $scope.$watch('hasTwitter', function(a) {
+        if (a === false) {
 
+        }
+        if (a === true) {
+
+        }
+    });
+    $scope.$watch('hasGoogle', function(a) {
+        if (a === false) {
+
+        }
+        if (a === true) {
+
+        }
+    });
 })
 
 .controller('SocialAccountsController', function ($scope, SocialAccounts) {
