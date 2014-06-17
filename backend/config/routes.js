@@ -46,6 +46,11 @@ module.exports.routes = {
         action: 'linkSocialAccount'
     },
 
+    'post /users/checkAuthToken': {
+        controller: 'users',
+        action: 'checkAuthToken'
+    },
+
     'post /users/loginSocialAccount': {
         controller: 'users',
         action: 'loginSocialAccount'
