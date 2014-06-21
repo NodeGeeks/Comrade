@@ -22,7 +22,7 @@ module.exports = {
         }
     },
     createEvent: function(req, res) {
-        Events.create({userID: req.body.userID, }).exec(function afterwards(err, found) {
+        Events.create({userID: req.body.userID }).exec(function afterwards(err, found) {
             if (found) {
                 res.json(found);
             }
@@ -37,7 +37,7 @@ module.exports = {
     },
     sharePlace: function(req, res) {
 
-    },
+    }
 	
 };
 

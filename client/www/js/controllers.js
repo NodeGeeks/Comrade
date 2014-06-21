@@ -4,6 +4,8 @@ angular.module('comrade.controllers', [])
 .controller('MainController', function($scope, $window, $http, $ionicLoading, $state, $location, SocialAccounts, $localStorage) {
     $scope.$hasHeader=false;
     $scope.$userStorage = $localStorage.user;
+    var baseURL = "http://192.168.1.127:1337";
+
     if ($scope.$userStorage && $scope.$userStorage.accessToken !== angular.undefined) {
 
         $http({method: 'POST', url: 'http://192.168.1.127:1337/users/checkAuthToken', data: {id: $scope.$userStorage.id, token: $scope.$userStorage.accessToken}}).
@@ -21,7 +23,23 @@ angular.module('comrade.controllers', [])
                 $location.path('/main');
             });
 
-    }
+    };
+
+    $scope.login = function(loginData) {
+        $ionicLoading.show({
+            template: 'Loading'
+        });
+        $http({method: 'POST', url: baseURL + '/users/login', data: loginData}).
+            success(function(data, status, headers, config) {
+                $localStorage.user = data[0];
+                $location.path('/loggedIn/dashboard');
+                $ionicLoading.hide();
+            }).
+            error(function(data, status, headers, config) {
+                $ionicLoading.hide();
+            });
+    };
+
     $scope.socialLogin = function(provider) {
 
         var retrieveStoreAndGo = function(userData) {
@@ -89,10 +107,11 @@ angular.module('comrade.controllers', [])
             options = {scope:'basic, friends, email', redirect_uri:'http://localhost/', oauth_proxy: 'https://auth-server.herokuapp.com/proxy'};
         };
         hello.login( provider, options, function(auth){
-            $ionicLoading.show({
-                template: 'Loading'
-            });
+
             hello(provider).api( '/me' ).success(function(r){
+                $ionicLoading.show({
+                    template: 'Loading..'
+                });
                 var firstName = r.first_name;
                 var lastName = r.last_name;
                 var baseURL = "http://192.168.1.127:1337";
@@ -112,38 +131,41 @@ angular.module('comrade.controllers', [])
 
 })
 
-.controller('LoginController', function($scope, $http, $location, $localStorage) {
+.controller('SignupController', function($scope, $http, $ionicLoading, $location, UserSession, $localStorage) {
     var baseURL = "http://192.168.1.127:1337";
-    $scope.login = function(loginData) {
 
-        $http({method: 'POST', url: baseURL + '/users/login', data: loginData}).
-            success(function(data, status, headers, config) {
-                $localStorage.user = data[0];
-                $location.path('/loggedIn/dashboard');
-            }).
-            error(function(data, status, headers, config) {
-                console.log(data);
-            });
-    };
-})
-
-.controller('SignupController', function($scope, $http, $location, UserSession, $localStorage) {
-    var baseURL = "http://192.168.1.127:1337";
     $scope.signup = function(signupData) {
+        $ionicLoading.show({
+            template: 'Loading'
+        });
         $http({method: 'POST', url: baseURL + '/users/signup', data: signupData}).
             success(function(data, status, headers, config) {
-
+                $ionicLoading.hide();
                 $localStorage.user = data[0];
                 $location.path('/loggedIn/tutorial');
             }).
             error(function(data, status, headers, config) {
-                alert(JSON.stringify(data));
+                $ionicLoading.hide();
             });
     };
 })
 
 .controller('DashboardController', function($scope, $http, $ionicModal, $location, $ionicActionSheet, $localStorage, Notifications, SocialAccounts, $cordovaCamera) {
     $scope.$userStorage = $localStorage.user;
+    if ($scope.$userStorage) {
+        if($scope.$userStorage.accessToken !== angular.undefined) {
+
+        $http({method: 'POST', url: 'http://192.168.1.127:1337/users/checkAuthToken', data: {id: $scope.$userStorage.id, token: $scope.$userStorage.accessToken}}).
+            success(function (data, status, headers, config) {
+                if (data === 'false') {
+                    $location.path('/main');
+                } else if (data === 'true') {
+                    //do nothing your more then welcome to stay
+                }
+
+            });
+        }
+    } else {$location.path('/main')};
     $scope.hasFacebook = $scope.$userStorage.facebookID ? true : false;
     $scope.isComrade = $scope.$userStorage.comradeUsername ? true : false;
     $scope.hasTwitter = $scope.$userStorage.twitterID ? true : false;
@@ -336,6 +358,7 @@ angular.module('comrade.controllers', [])
     $scope.hasTwitter = $scope.UserData.twitterID ? true : false;
     $scope.hasGoogle = $scope.UserData.googleID ? true : false;
     $scope.search = false;
+    $scope.addComrade = false;
     $scope.isComrade = function (id) {
         comradess = angular.fromJson(window.localStorage['comrades']);
         for (var i=0;i<comradess.length;i++){

@@ -1,13 +1,13 @@
 
 <ion-view title="Dashboard">
-    <ion-nav-bar class="bar-dark nav-title-slide-ios7">
+    <ion-nav-bar class="bar comradeGradient nav-title-slide-ios7">
         <button ng-click="openSettingsModal()" class="button button-icon icon ion-ios7-gear-outline pull-right"></button>
     </ion-nav-bar>
-    <div class="bar bar-subheader">
+    <div class="bar comradeGradient bar-subheader">
         <button ng-show="{{hasFacebook}}" ng-click="filterSocial('facebook')" class="button button-icon icon ion-social-facebook-outline"></button>
         <button ng-show="{{hasGoogle}}" ng-click="filterSocial('google')" class="button button-icon icon ion-social-googleplus-outline"></button>
         <button ng-show="{{hasTwitter}}" ng-click="filterSocial('twitter')" class="button button-icon icon ion-social-twitter-outline"></button>
-        <button ng-click="openLinkMoreModal()" class="button button-icon icon ion-ios7-plus-empty"></button>
+        <button ng-click="openLinkMoreModal()" class="button button-icon icon ion-ios7-plus-outline"></button>
     </div>
     <div class="has-subheader social-bubble-holder">
         <img class="social-bubble" src="{{UserData.comradePic}}" ng-show="{{isComrade}}" ng-click="profilePhotoAction()" >
@@ -89,9 +89,8 @@
 <script id="linkanothersocialaccount.html" type="text/ng-template">
     <div class="modal">
         <ion-header-bar>
-            <button ng-click="closeLinkMoreModal()" class="button button-clear icon ion-chevron-left"></button>
+            <button ng-click="closeLinkMoreModal()" class="button button-clear pull-right">Done</button>
             <h1 class="title">Add More Accounts</h1>
-
         </ion-header-bar>
         <ion-content>
             <ion-list>
