@@ -94,17 +94,97 @@ module.exports = {
     },
 
     signup: function (req, res) {
-        Users.create({ comradeUsername: req.body.username, firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, password: req.body.password}).exec(function aftwards(err, user, um, ok) {
-            console.log(user);
-            console.log(err);
-            console.log(um);
-            console.log(ok);
-            if (user) {
-                res.json(user);
-            } else if (err) {
-                res.json({ error: 'Could not create user' }, 404);
-                //TODO give better reason on why the user was unable to be created
+        var bcrypt = require('bcrypt-nodejs');
+        bcrypt.genSalt(10, function(err, salt) {
+            if (err) {
+                res.json(err);
             }
+
+            bcrypt.hash(req.body.password, salt, function() {} , function(err, hash) {
+                if (err) {
+                    res.json(err);
+                }
+                req.body.password = hash;
+                bcrypt.genSalt(10, function(err, salt) {
+                    if (err) {
+                        res.json(err);
+                    }
+                    bcrypt.hash(hash, salt, function() {} , function(err, hash2) {
+                        req.body.accessToken = hash2;
+                    });
+                });
+                bcrypt.genSalt(10, function(err, salt) {
+                    if (err) {
+                        res.json(err);
+                    }
+
+
+                    bcrypt.hash(req.body.password, salt, function() {} , function(err, hash1) {
+                        if (err) {
+                            res.json(err);
+                        }
+                        req.body.activationToken = hash1;
+
+                        Users.find({comradeUsername: req.body.username}).exec( function findCB(err, found) {
+
+                            if (found.length >= 1) {
+                                res.json({exists: 'this username already exists', errorCode: 'USERNAME_EXISTS'})
+                            } else if (found ==  null || found == undefined || found.length < 1) {
+                                Users.find({email: req.body.email}).exec( function findCB(err, found) {
+                                    if (found.length >= 1) {
+                                        res.json({exists: 'this email already exists', errorCode: 'EMAIL_EXISTS'})
+                                    } else if (found ==  null || found == undefined || found.length < 1) {
+                                        Users.create({ comradeUsername: req.body.username, firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, password: req.body.password, accessToken: req.body.accessToken, activationToken: req.body.activationToken}).exec(function aftwards(err, user) {
+                                            if (user) {
+                                                console.log('this is the first time this user has been created ', user);
+                                                var mailOptions = {
+                                                    from: 'aaron@teknologenie.com',
+                                                    to: req.body.email,
+                                                    subject: 'Comrade Account Verficiation',
+                                                    text: 'In order to use your Comrade account please follow the link bellow to verify your email address and activate your account /n /n https://comradeapp.com/users/activate?email='+req.body.email+'&activationToken='+hash1+''
+                                                };
+                                                var nodemailer = require("nodemailer");
+                                                var transport = nodemailer.createTransport("direct", {debug: true});
+                                                transport.sendMail(mailOptions, function(error, response){
+                                                    if(error){
+                                                        console.log(error);
+                                                        return;
+                                                    }
+
+                                                    // response.statusHandler only applies to 'direct' transport
+                                                    response.statusHandler.once("failed", function(data){
+                                                        console.log(
+                                                            "Permanently failed delivering message to %s with the following response: %s",
+                                                            data.domain, data.response);
+                                                    });
+
+                                                    response.statusHandler.once("requeue", function(data){
+                                                        console.log("Temporarily failed delivering message to %s", data.domain);
+                                                    });
+
+                                                    response.statusHandler.once("sent", function(data){
+                                                        console.log("Message was accepted by %s", data.domain);
+                                                    });
+                                                });
+                                                res.json(user);
+
+                                            } else if (err) {
+                                                res.json({ error: 'Could not create user' }, 404);
+                                            }
+                                        });
+                                    }
+                                    if (err) {
+                                        res.json({ error: 'Could not create user' }, 404);
+                                    }
+                                })
+                            }
+                            if (err) {
+                                res.json({ error: 'Could not create user' }, 404);
+                            }
+                        });
+                    });
+                });
+            });
         });
 
     },
@@ -135,10 +215,11 @@ module.exports = {
                 if (err) return next(err);
                 accessToken = hash;
                 if (provider == "facebook") {
-                    //TODO findOrCreate does not receive a callback on the first run through (the create part), therefore we need to do a workaround but doing the old fashion check if the value exists if not create it.
-                    Users.findOrCreate({facebookID: socialID},{firstName: firstName, lastName: lastName, facebookID: socialID, accessToken: accessToken}).exec(function createFindCB(err,record){
-                        if (record) {
-                            Users.update({facebookID: socialID}, {accessToken: accessToken}).exec(function afterwards(err,updated){
+                    Users.find({facebookID: socialID}).exec( function findCB(err, found) {
+
+                        if (found.length >= 1) {
+                            console.log(found);
+                            Users.update({facebookID: socialID}, {accessToken: accessToken}).exec(function afterwards(err, updated) {
                                 if (err) {
                                     res.serverError(err);
                                 }
@@ -146,15 +227,28 @@ module.exports = {
                                     res.json(updated);
                                 }
                             });
+
+                        } else if (found == null || found == undefined || found.length < 1) {
+                            Users.create({facebookID: socialID, firstName: firstName, lastName: lastName, accessToken: accessToken}).exec(function createdCB(err, created) {
+                                if (created) {
+                                    res.json(created);
+                                    res.json({created: 'successfully created new user'})
+                                }
+                                if (err) {
+                                    res.serverError(err);
+                                }
+                            });
                         }
-                        if (err ) {
-                            res.serverError(err);
+                        if (err) {
+                            res.json({ error: 'Could not find user' }, 404);
                         }
                     });
                 } else if (provider == "google") {
-                    Users.findOrCreate({googleID: socialID},{firstName: firstName, lastName: lastName, googleID: socialID, accessToken: accessToken}).exec(function createFindCB(err,record){
-                        if (record) {
-                            Users.update({googleID: socialID}, {accessToken: accessToken}).exec(function afterwards(err,updated){
+                    Users.find({googleID: socialID}).exec( function findCB(err, found) {
+
+                        if (found.length >= 1) {
+                            console.log(found);
+                            Users.update({googleID: socialID}, {accessToken: accessToken}).exec(function afterwards(err, updated) {
                                 if (err) {
                                     res.serverError(err);
                                 }
@@ -162,38 +256,78 @@ module.exports = {
                                     res.json(updated);
                                 }
                             });
-                        } else if (err) {
-                            res.serverError(err);
+
+                        } else if (found == null || found == undefined || found.length < 1) {
+                            Users.create({googleID: socialID, firstName: firstName, lastName: lastName, accessToken: accessToken}).exec(function createdCB(err, created) {
+                                if (created) {
+                                    res.json(created);
+                                    res.json({created: 'successfully created new user'})
+                                }
+                                if (err) {
+                                    res.serverError(err);
+                                }
+                            });
+                        }
+                        if (err) {
+                            res.json({ error: 'Could not find user' }, 404);
                         }
                     });
                 } else if (provider == "twitter") {
-                    Users.findOrCreate({twitterID: socialID},{firstName: firstName, lastName: lastName, twitterID: socialID, accessToken: accessToken}).exec(function createFindCB(err,record){
-                        if (record) {
-                            Users.update({twitterID: socialID}, {accessToken: accessToken}).exec(function afterwards(err,updated){
+                    Users.find({twitterID: socialID}).exec( function findCB(err, found) {
+
+                        if (found.length >= 1) {
+                            console.log(found);
+                            Users.update({twitterID: socialID}, {accessToken: accessToken}).exec(function afterwards(err, updated) {
                                 if (err) {
-                                    res.json(err);
+                                    res.serverError(err);
                                 }
                                 if (updated) {
                                     res.json(updated);
                                 }
                             });
-                        } else if (err) {
-                            res.serverError(err);
+
+                        } else if (found == null || found == undefined || found.length < 1) {
+                            Users.create({twitterID: socialID, firstName: firstName, lastName: lastName, accessToken: accessToken}).exec(function createdCB(err, created) {
+                                if (created) {
+                                    res.json(created);
+                                    res.json({created: 'successfully created new user'})
+                                }
+                                if (err) {
+                                    res.serverError(err);
+                                }
+                            });
+                        }
+                        if (err) {
+                            res.json({ error: 'Could not find user' }, 404);
                         }
                     });
                 } else if (provider == "linkedin") {
-                    Users.findOrCreate({linkedInID: socialID},{firstName: firstName, lastName: lastName, linkedInID: socialID, accessToken: accessToken}).exec(function createFindCB(err,record){
-                        if (record) {
-                            Users.update({linkedInID: socialID}, {accessToken: accessToken}).exec(function afterwards(err,updated){
+                    Users.find({linkedInID: socialID}).exec( function findCB(err, found) {
+
+                        if (found.length >= 1) {
+                            console.log(found);
+                            Users.update({linkedInID: socialID}, {accessToken: accessToken}).exec(function afterwards(err, updated) {
                                 if (err) {
-                                    res.json(err);
+                                    res.serverError(err);
                                 }
                                 if (updated) {
                                     res.json(updated);
                                 }
                             });
-                        } else if (err) {
-                            res.serverError(err);
+
+                        } else if (found == null || found == undefined || found.length < 1) {
+                            Users.create({linkedInID: socialID, firstName: firstName, lastName: lastName, accessToken: accessToken}).exec(function createdCB(err, created) {
+                                if (created) {
+                                    res.json(created);
+                                    res.json({created: 'successfully created new user'})
+                                }
+                                if (err) {
+                                    res.serverError(err);
+                                }
+                            });
+                        }
+                        if (err) {
+                            res.json({ error: 'Could not find user' }, 404);
                         }
                     });
                 }
