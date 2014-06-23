@@ -16,7 +16,7 @@ module.exports = {
             columnName: 'name'
         },
         hostUserID: {
-            type: 'int',
+            type: 'string',
             required: true,
             columnName: 'hostUserID'
         },

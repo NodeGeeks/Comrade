@@ -11,7 +11,7 @@ module.exports = {
     schema: true,
     attributes: {
         userID: {
-            type: 'int',
+            type: 'string',
             required: true,
             columnName: 'userID'
         },
