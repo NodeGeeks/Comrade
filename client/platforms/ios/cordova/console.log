@@ -206,3 +206,10 @@ Terminating in response to SpringBoard's termination.
 2014-06-19 18:33:55.297 Comrade[18623:70b] [CDVTimer][TotalPluginStartup] 14.838994ms
 2014-06-19 18:33:55.746 Comrade[18623:70b] Resetting plugins due to page load.
 2014-06-19 18:33:57.543 Comrade[18623:70b] Finished load of: file:///Users/aaronrussell/Library/Application%20Support/iPhone%20Simulator/7.1/Applications/0C53F711-D990-453A-9245-58F99B774A82/Comrade.app/www/index.html#/
+2014-06-20 23:25:49.615 Comrade[21286:70b] Multi-tasking -> Device: YES, App: YES
+2014-06-20 23:25:49.684 Comrade[21286:70b] Unlimited access to network resources
+2014-06-20 23:25:49.860 Comrade[21286:70b] [CDVTimer][keyboard] 0.101030ms
+2014-06-20 23:25:49.874 Comrade[21286:70b] [CDVTimer][statusbar] 13.408005ms
+2014-06-20 23:25:49.875 Comrade[21286:70b] [CDVTimer][TotalPluginStartup] 15.186012ms
+2014-06-20 23:25:50.365 Comrade[21286:70b] Resetting plugins due to page load.
+2014-06-20 23:25:51.941 Comrade[21286:70b] Finished load of: file:///Users/aaronrussell/Library/Application%20Support/iPhone%20Simulator/7.1/Applications/0C53F711-D990-453A-9245-58F99B774A82/Comrade.app/www/index.html#/
