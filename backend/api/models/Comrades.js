@@ -8,19 +8,29 @@
 module.exports = {
 
     tableName: 'comrades',
-    schema: false,
+    schema: true,
     attributes: {
         userID: {
-            type: 'int',
+            type: 'string',
             required: true,
             columnName: 'userID'
+        },
+        usersFullName: {
+            type: 'string',
+            required: true,
+            columnName: 'usersFullName'
+        },
+        comradesFullName: {
+            type: 'string',
+            required: true,
+            columnName: 'comradesFullName'
         },
         comradePhoto: {
             type: 'string',
             columnName: 'comradePhoto'
         },
         comradeID: {
-            type: 'int',
+            type: 'string',
             required: true,
             columnName: 'comradeID'
         },
@@ -32,13 +42,9 @@ module.exports = {
         comrades: {
             type: 'string',
             defaultsTo: 'pending',
-            enum: ['pending', 'approved', 'denied', 'blocked', 'ignored'],
+            enum: ['pending', 'approved', 'denied', 'blocked', 'ignored', 'sent'],
             columnName: 'comrades'
         }
-    },
-
-    beforeCreate: function(val, next) {
-
     }
 };
 
