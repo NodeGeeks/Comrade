@@ -9,13 +9,18 @@
  */
 module.exports = function(req, res, next) {
 
-  // User is allowed, proceed to the next policy, 
-  // or if this is the last policy, the controller
-  if (req.session.authenticated) {
-    return next();
-  }
+        var userID = req.body.id;
+        var userToken = req.body.accessToken;
+    console.log("token: " + userToken);
+        Users.findOne({id: userID }).exec( function foundUser (err, user) {
 
-  // User is not allowed
-  // (default res.forbidden() behavior can be overridden in `config/403.js`)
-  return res.forbidden('You are not permitted to perform this action.');
+            if (err) return next(err);
+
+            if ( ! user ) return res.forbidden('bad access token');
+
+            if ( user.accessToken !== userToken ) return res.forbidden('bad access token');
+
+            next();
+        });
+
 };
