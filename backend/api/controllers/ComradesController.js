@@ -33,9 +33,9 @@ module.exports = {
         if (emailRegex.test(val) == true) {
             Users.findOne().where({email: val})
             .then(function (found) {
-                Comrades.create({userID: req.body.id, comradeID: found.id, comrades: 'approved'})
+                Comrades.create({userID: req.body.id, comradeID: found.id, comradesFullName: found.firstName +" "+ found.lastName, comrades: 'approved'})
                 .then(function (created){
-                    Comrades.create({userID: found.id, comradeID: req.body.id, comrades: 'pending'})
+                    Comrades.create({userID: found.id, comradeID: req.body.id, comradesFullName: req.body.fullName, comrades: 'pending'})
                     .then(function (created1){
                         return res.json(created1);
                     })
@@ -101,16 +101,22 @@ module.exports = {
 
     },
     acceptComradesRequest: function (req, res) {
-        Comrades.update({userID: req.body.userID, comradesID: req.body.comradesID}, {comrades: 'accepted'})
-        .then(function (updated){
-            return res.json(updated);
-        })
-        .fail(function(err) {
-            return res.serverError(err);
-        });
+        Comrades.update({userID: req.body.userID, comradesID: req.body.comradesID}, {comrades: 'approved'})
+            .then(function (updated){
+                Comrades.update({userID: req.body.comradesID, comradesID: req.body.userID}, {comrades: 'approved'})
+                    .then(function (updated){
+                        res.json(updated);
+                    })
+                    .fail(function(err){
+                        res.serverError(err);
+                    });
+            })
+            .fail(function(err) {
+                return res.serverError(err);
+            });
     },
     denyComradesRequest: function (req, res) {
-        Comrades.update({userID: req.body.userID, comradesID: req.body.comradesID}, {comrades: 'denied'})
+        Comrades.update({userID: req.body.userID, comradesID: req.body.comradesID}, {comrades: 'i-denied'})
         .then(function (updated){
                 Comrades.update({userID: req.body.comradesID, comradesID: req.body.userID}, {comrades: 'denied'})
                 .then(function (updated){
@@ -126,22 +132,34 @@ module.exports = {
 
     },
     ignoreComradesRequest: function (req, res) {
-        Comrades.update({userID: req.body.userID, comradesID: req.body.comradesID}, {comrades: 'ignored'})
-        .then(function (updated){
-            res.json(updated);
-        })
-        .fail(function(err){
-            res.serverError(err);
-        });
+        Comrades.update({userID: req.body.userID, comradesID: req.body.comradesID}, {comrades: 'i-ignored'})
+            .then(function (updated){
+                Comrades.update({userID: req.body.comradesID, comradesID: req.body.userID}, {comrades: 'ignored'})
+                    .then(function (updated){
+                        res.json(updated);
+                    })
+                    .fail(function(err){
+                        res.serverError(err);
+                    });
+            })
+            .fail(function(err) {
+                return res.serverError(err);
+            });
     },
     blockComrade: function (req, res) {
-        Comrades.update({userID: req.body.userID, comradesID: req.body.comradesID}, {comrades: 'blocked'})
-        .then(function (updated){
-            res.json(updated);
-        })
-        .fail(function(err){
-            res.serverError(err);
-        });
+        Comrades.update({userID: req.body.userID, comradesID: req.body.comradesID}, {comrades: 'i-blocked'})
+            .then(function (updated){
+                Comrades.update({userID: req.body.comradesID, comradesID: req.body.userID}, {comrades: 'blocked'})
+                    .then(function (updated){
+                        res.json(updated);
+                    })
+                    .fail(function(err){
+                        res.serverError(err);
+                    });
+            })
+            .fail(function(err) {
+                return res.serverError(err);
+            });
     }
 };
 

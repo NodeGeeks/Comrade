@@ -15,11 +15,6 @@ module.exports = {
             required: true,
             columnName: 'userID'
         },
-        usersFullName: {
-            type: 'string',
-            required: true,
-            columnName: 'usersFullName'
-        },
         comradesFullName: {
             type: 'string',
             required: true,
@@ -37,12 +32,13 @@ module.exports = {
         onlineStatus: {
             type: 'string',
             defaultsTo: 'offline',
-            enum: ['offline','online']
+            enum: ['offline', 'online', 'busy'],
+            columnName: 'onlineStatus'
         },
         comrades: {
             type: 'string',
             defaultsTo: 'pending',
-            enum: ['pending', 'approved', 'denied', 'blocked', 'ignored', 'sent'],
+            enum: ['pending', 'approved', 'denied', 'i-denied', 'blocked', 'i-blocked', 'ignored', 'i-ignored', 'sent'],
             columnName: 'comrades'
         }
     }
