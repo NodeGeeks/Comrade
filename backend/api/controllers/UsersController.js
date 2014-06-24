@@ -18,10 +18,11 @@ module.exports = {
 
         var bcrypt = require('bcrypt-nodejs');
         var thingToEncrypt = "comrade" + _.random(598, 78905478) + req.body + _.random(23, 8300000000);
-        Users.findOne({email: req.body.email}).exec(function (err, user) {
-            if (err) res.serverError({ error: 'DB error' }, 500);
+        var emailRegex = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
 
-            if (user) {
+        if (emailRegex.test(req.body.email) == true) {
+            Users.findOne().where({email: req.body.email})
+            .then(function (user) {
                 bcrypt.compare(req.body.password, user.password, function (err, match) {
                     if (err) res.serverError({ error: 'Server error' }, 500);
 
@@ -33,13 +34,12 @@ module.exports = {
                             bcrypt.hash(thingToEncrypt, salt, function () {}, function (err, hash) {
                                 if (err) return next(err);
                                 var accessToken = hash;
-                                Users.update({id: user.id}, {accessToken: accessToken}).exec(function afterwards(err, updated) {
-                                    if (err) {
-                                        res.serverError(err);
-                                    }
-                                    if (updated) {
-                                        res.json(updated);
-                                    }
+                                Users.update({id: user.id}, {accessToken: accessToken})
+                                .then(function (updated) {
+                                    return res.json(updated);
+                                })
+                                .fail(function (err) {
+                                    return res.serverError(err);
                                 });
                             });
                         });
@@ -48,48 +48,55 @@ module.exports = {
                         res.serverError({ error: 'Invalid password' }, 401);
                     }
                 });
-            } else {
-                Users.findOne({comradeUsername: req.body.email}).exec(function (err, user) {
-                    if (err) res.serverError({ error: 'DB error' }, 500);
+            })
+            .fail(function(err) {
+                return res.serverError(err);
+            });
+        } else if (req.body.email) {
+            Users.findOne().where({comradeUsername: req.body.email})
+                .then(function (user) {
+                    bcrypt.compare(req.body.password, user.password, function (err, match) {
+                        if (err) res.serverError({ error: 'Server error' }, 500);
 
-                    if (user) {
-                        bcrypt.compare(req.body.password, user.password, function (err, match) {
-                            if (err) res.serverError({ error: 'Server error' }, 500);
+                        if (match) {
+                            req.session.user = user.id;
+                            bcrypt.genSalt(10, function(err, salt) {
+                                if (err) return next(err);
 
-                            if (match) {
-                                req.session.user = user.id;
-                                bcrypt.genSalt(10, function(err, salt) {
+                                bcrypt.hash(thingToEncrypt, salt, function () {}, function (err, hash) {
                                     if (err) return next(err);
-
-                                    bcrypt.hash(thingToEncrypt, salt, function () {}, function (err, hash) {
-                                        if (err) return next(err);
-                                        var accessToken = hash;
-                                        Users.update({id: user.id}, {accessToken: accessToken}).exec(function afterwards(err, updated) {
-                                            if (err) {
-                                                res.serverError(err);
-                                            }
-                                            if (updated) {
-                                                res.json(updated);
-                                            }
+                                    var accessToken = hash;
+                                    Users.update({id: user.id}, {accessToken: accessToken})
+                                        .then(function (updated) {
+                                            return res.json(updated);
+                                        })
+                                        .fail(function (err) {
+                                            return res.serverError(err);
                                         });
-                                    });
                                 });
-                            } else {
-                                if (req.session.user) req.session.user = null;
-                                res.serverError({ error: 'Invalid password' }, 401);
-                            }
-                        });
-                    } else {
-                        res.json({ error: 'User not found' }, 404);
-                    }
+                            });
+                        } else {
+                            if (req.session.user) req.session.user = null;
+                            res.serverError({ error: 'Invalid password' }, 401);
+                        }
+                    });
+                })
+                .fail(function(err) {
+                    return res.serverError(err);
                 });
-            }
-        });
+        } else if (!req.body.email) {
+            res.notFound('Cant log you in if we dont know who you are.');
+        }
     },
 
     activateAccount: function (req, res) {
-        Users.update({email: req.body.email, activationToken: req.body.activationToken}, {activated: true}).exec(function aftwards(err, update){
-
+        Users.update({email: req.body.email, activationToken: req.body.activationToken}, {activated: true})
+        .then(function (update){
+            return res.json(update);
+            //TODO added a response to redirect to a page on the site for successful account activation
+        })
+        .fail(function(err){
+            return res.serverError(err);
         });
     },
 
@@ -99,7 +106,6 @@ module.exports = {
             if (err) {
                 res.json(err);
             }
-
             bcrypt.hash(req.body.password, salt, function() {} , function(err, hash) {
                 if (err) {
                     res.json(err);
@@ -174,12 +180,12 @@ module.exports = {
                                         });
                                     }
                                     if (err) {
-                                        res.json({ error: 'Could not create user' }, 404);
+                                        res.json({ error: 'Could not create hash' }, 404);
                                     }
                                 })
                             }
                             if (err) {
-                                res.json({ error: 'Could not create user' }, 404);
+                                res.json(err);
                             }
                         });
                     });
@@ -190,13 +196,12 @@ module.exports = {
     },
 
     logout: function (req, res) {
-        Users.update({id: req.body.id}, {accessToken: 'invalid'}).exec(function afterwards(err,updated){
-            if (err) {
-                res.serverError(err);
-            }
-            if (updated) {
-                res.json({success: 'updated'});
-            }
+        Users.update({id: req.body.id, accessToken:req.body.accessToken}, { accessToken: 'invalid'} )
+        .then(function (updated){
+            return res.json(updated);
+        })
+        .failed(function(err) {
+            return res.serverError(err);
         });
     },
 
@@ -215,121 +220,109 @@ module.exports = {
                 if (err) return next(err);
                 accessToken = hash;
                 if (provider == "facebook") {
-                    Users.find({facebookID: socialID}).exec( function findCB(err, found) {
+                    Users.find().where({facebookID: socialID})
+                    .then( function (found) {
 
                         if (found.length >= 1) {
-                            console.log(found);
-                            Users.update({facebookID: socialID}, {accessToken: accessToken}).exec(function afterwards(err, updated) {
-                                if (err) {
-                                    res.serverError(err);
-                                }
-                                if (updated) {
-                                    res.json(updated);
-                                }
+                            Users.update({facebookID: socialID}, {accessToken: accessToken})
+                            .then(function (updated) {
+                                return res.json(updated);
+                            })
+                            .fail(function(err){
+                                return res.serverError(err);
                             });
 
                         } else if (found == null || found == undefined || found.length < 1) {
-                            Users.create({facebookID: socialID, firstName: firstName, lastName: lastName, accessToken: accessToken}).exec(function createdCB(err, created) {
-                                if (created) {
-                                    res.json(created);
-                                    res.json({created: 'successfully created new user'})
-                                }
-                                if (err) {
-                                    res.serverError(err);
-                                }
+                            Users.create({facebookID: socialID, firstName: firstName, lastName: lastName, accessToken: accessToken})
+                            .then(function (created) {
+                                return res.json(created);
+                            })
+                            .fail(function(err){
+                                return res.serverError(err);
                             });
                         }
-                        if (err) {
-                            res.json({ error: 'Could not find user' }, 404);
-                        }
+                    })
+                    .fail(function(err){
+                        return res.serverError(err);
                     });
                 } else if (provider == "google") {
-                    Users.find({googleID: socialID}).exec( function findCB(err, found) {
+                    Users.find().where({googleID: socialID})
+                        .then( function (found) {
 
-                        if (found.length >= 1) {
-                            console.log(found);
-                            Users.update({googleID: socialID}, {accessToken: accessToken}).exec(function afterwards(err, updated) {
-                                if (err) {
-                                    res.serverError(err);
-                                }
-                                if (updated) {
-                                    res.json(updated);
-                                }
-                            });
+                            if (found.length >= 1) {
+                                Users.update({googleID: socialID}, {accessToken: accessToken})
+                                    .then(function (updated) {
+                                        return res.json(updated);
+                                    })
+                                    .fail(function(err){
+                                        return res.serverError(err);
+                                    });
 
-                        } else if (found == null || found == undefined || found.length < 1) {
-                            Users.create({googleID: socialID, firstName: firstName, lastName: lastName, accessToken: accessToken}).exec(function createdCB(err, created) {
-                                if (created) {
-                                    res.json(created);
-                                    res.json({created: 'successfully created new user'})
-                                }
-                                if (err) {
-                                    res.serverError(err);
-                                }
-                            });
-                        }
-                        if (err) {
-                            res.json({ error: 'Could not find user' }, 404);
-                        }
-                    });
+                            } else if (found == null || found == undefined || found.length < 1) {
+                                Users.create({googleID: socialID, firstName: firstName, lastName: lastName, accessToken: accessToken})
+                                    .then(function (created) {
+                                        return res.json(created);
+                                    })
+                                    .fail(function(err){
+                                        return res.serverError(err);
+                                    });
+                            }
+                        })
+                        .fail(function(err){
+                            return res.serverError(err);
+                        });
                 } else if (provider == "twitter") {
-                    Users.find({twitterID: socialID}).exec( function findCB(err, found) {
+                    Users.find().where({twitterID: socialID})
+                        .then( function (found) {
 
-                        if (found.length >= 1) {
-                            console.log(found);
-                            Users.update({twitterID: socialID}, {accessToken: accessToken}).exec(function afterwards(err, updated) {
-                                if (err) {
-                                    res.serverError(err);
-                                }
-                                if (updated) {
-                                    res.json(updated);
-                                }
-                            });
+                            if (found.length >= 1) {
+                                Users.update({twitterID: socialID}, {accessToken: accessToken})
+                                    .then(function (updated) {
+                                        return res.json(updated);
+                                    })
+                                    .fail(function(err){
+                                        return res.serverError(err);
+                                    });
 
-                        } else if (found == null || found == undefined || found.length < 1) {
-                            Users.create({twitterID: socialID, firstName: firstName, lastName: lastName, accessToken: accessToken}).exec(function createdCB(err, created) {
-                                if (created) {
-                                    res.json(created);
-                                    res.json({created: 'successfully created new user'})
-                                }
-                                if (err) {
-                                    res.serverError(err);
-                                }
-                            });
-                        }
-                        if (err) {
-                            res.json({ error: 'Could not find user' }, 404);
-                        }
-                    });
+                            } else if (found == null || found == undefined || found.length < 1) {
+                                Users.create({twitterID: socialID, firstName: firstName, lastName: lastName, accessToken: accessToken})
+                                    .then(function (created) {
+                                        return res.json(created);
+                                    })
+                                    .fail(function(err){
+                                        return res.serverError(err);
+                                    });
+                            }
+                        })
+                        .fail(function(err){
+                            return res.serverError(err);
+                        });
                 } else if (provider == "linkedin") {
-                    Users.find({linkedInID: socialID}).exec( function findCB(err, found) {
+                    Users.find().where({linkedInID: socialID})
+                        .then( function (found) {
 
-                        if (found.length >= 1) {
-                            console.log(found);
-                            Users.update({linkedInID: socialID}, {accessToken: accessToken}).exec(function afterwards(err, updated) {
-                                if (err) {
-                                    res.serverError(err);
-                                }
-                                if (updated) {
-                                    res.json(updated);
-                                }
-                            });
+                            if (found.length >= 1) {
+                                Users.update({linkedInID: socialID}, {accessToken: accessToken})
+                                    .then(function (updated) {
+                                        return res.json(updated);
+                                    })
+                                    .fail(function(err){
+                                        return res.serverError(err);
+                                    });
 
-                        } else if (found == null || found == undefined || found.length < 1) {
-                            Users.create({linkedInID: socialID, firstName: firstName, lastName: lastName, accessToken: accessToken}).exec(function createdCB(err, created) {
-                                if (created) {
-                                    res.json(created);
-                                    res.json({created: 'successfully created new user'})
-                                }
-                                if (err) {
-                                    res.serverError(err);
-                                }
-                            });
-                        }
-                        if (err) {
-                            res.json({ error: 'Could not find user' }, 404);
-                        }
-                    });
+                            } else if (found == null || found == undefined || found.length < 1) {
+                                Users.create({linkedInID: socialID, firstName: firstName, lastName: lastName, accessToken: accessToken})
+                                    .then(function (created) {
+                                        return res.json(created);
+                                    })
+                                    .fail(function(err){
+                                        return res.serverError(err);
+                                    });
+                            }
+                        })
+                        .fail(function(err){
+                            return res.serverError(err);
+                        });
                 }
             });
         });
@@ -341,45 +334,38 @@ module.exports = {
         var id = req.body.id;
         var token = req.body.token;
         if (provider == "facebook") {
-            Users.update({id: id, accessToken:token}, { facebookID: socialID} ).exec(function afterwards(err,updated){
-                if (err) {
-                    res.serverError(err);
-                }
-                if (updated) {
-                    res.json(updated);
-                }
+            Users.update({id: id, accessToken:token}, { facebookID: socialID} )
+            .then(function (updated){
+                return res.json(updated);
+            })
+            .failed(function(err) {
+                return res.serverError(err);
             });
         } else if (provider == "google") {
-            Users.update({id: id, accessToken:token}, { googleID: socialID} ).exec(function afterwards(err,updated){
-
-                if (err) {
-                    res.serverError(err);
-                }
-                if (updated) {
-                    res.json(updated);
-                }
+            Users.update({id: id, accessToken:token}, { googleID: socialID} )
+            .then(function (updated){
+                return res.json(updated);
+            })
+            .failed(function(err) {
+                return res.serverError(err);
             });
         } else if (provider == "twitter") {
-            Users.update({id: id, accessToken:token}, { twitterID: socialID} ).exec(function afterwards(err,updated){
-                if (err) {
-                    res.serverError(err);
-                }
-                if (updated) {
-                    res.json(updated);
-                }
+            Users.update({id: id, accessToken:token}, { twitterID: socialID} )
+            .then(function (updated){
+                return res.json(updated);
+            })
+            .failed(function(err) {
+                return res.serverError(err);
             });
         } else if (provider == "linkedin") {
-            Users.update({id: id, accessToken:token}, { linkedInID: socialID} ).exec(function afterwards(err,updated){
-                if (err) {
-                    res.serverError(err);
-                }
-                if (updated) {
-                    res.json(updated);
-                }
+            Users.update({id: id, accessToken:token}, { linkedInID: socialID} )
+            .then(function (updated){
+                return res.json(updated);
+            })
+            .failed(function(err) {
+                return res.serverError(err);
             });
         }
-
-
     }
 };
 
