@@ -7,20 +7,14 @@
 
 module.exports = {
     requests: function(req, res) {
-        if (!req.body.userID || !req.body.accessToken ) {
-            res.serverError('No ID or Token found, are you sure your logged in?')
-        } else {
+        Requests.find().where({userID: req.body.userID})
+        .then(function (found) {
+            return res.json(found);
+        })
+        .fail(function(err) {
+            return res.serverError(err);
+        });
 
-            Requests.findOne({userID: req.body.userID}).exec(function afterwards(err, found) {
-                if (found) {
-                    res.json(found);
-                }
-                if (err) {
-                    res.serverError(err);
-                }
-
-            });
-        }
     },
 
     invite: function(req,res) {

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Comrade App</title>
+    <!-- Theme stylesheet -->
+    <link href="styles/style.css" rel="stylesheet" type="text/css">
+    <link href="styles/responsive.css" rel="stylesheet" type="text/css">
+    <!-- Roboto Font stylesheet -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700' rel='stylesheet' type='text/css'>
+    <!-- FontAwesome stylesheet -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- LayerSlider stylesheet -->
+    <link rel="stylesheet" href="js/layerslider/css/layerslider.css" type="text/css">
+
+    <link href="styles/lightbox.css" rel="stylesheet" />
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+    </head>
+
+    <body>
+        <%- body %>
+    </body>
+
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
+    <script src="js/layerslider/js/greensock.js" type="text/javascript"></script>
+    <script src="js/comrade.js" type="text/javascript"></script>
+    <!-- LayerSlider script files -->
+    <script src="js/layerslider/js/layerslider.transitions.js" type="text/javascript"></script>
+    <script src="js/layerslider/js/layerslider.kreaturamedia.jquery.js" type="text/javascript"></script>
+
+    <!-- Lightbox -->
+    <script src="js/lightbox.min.js"></script>
+
+    <!-- Shuffle.js (screens) -->
+    <script src="js/jquery.shuffle.modernizr.js"></script>
+
+    <!-- Layer Slider init -->
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#layerslider').layerSlider({
+                thumbnailNavigation: 'disabled',
+                skinsPath: 'js/layerslider/skins/',
+                navPrevNext: false,
+                navStartStop: false,
+                showCircleTimer: false
+            });
+
+        });
+    </script>
+
+
+    <!-- Theme JS -->
+    <script src="js/delicioustheme.js" type="text/javascript"></script>
+
+</html>
