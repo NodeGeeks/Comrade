@@ -432,7 +432,7 @@ p {
     text-align: center;
 }
 
-.iconColWrap i.fa {
+.iconColWrap i.fa, .iconColWrap i.icon {
     min-width: 30px;
     font-size: 32px;
     border: 2px solid #66cc99;
@@ -450,7 +450,7 @@ p {
     margin-bottom: 35px;
 }
 
-.iconColWrap:hover i.fa {
+.iconColWrap:hover i.fa, .iconColWrap:hover i.icon {
     color: #fff;
     background: #66cc99;
 }
@@ -497,7 +497,7 @@ p {
     margin-right: 20px;
 }
 
-.iconRightColWrap i.fa {
+.iconRightColWrap i.fa, .iconRightColWrap i.icon {
     font-size: 32px;
     border: 2px solid #66cc99;
     color: #66cc99;
@@ -514,7 +514,7 @@ p {
     text-align: center;
 }
 
-.iconRightColWrap:hover i.fa {
+.iconRightColWrap:hover i.fa, .iconRightColWrap:hover i.icon {
     color: #fff;
     background: #66cc99;
 }
@@ -561,7 +561,7 @@ p {
     margin-left: 20px;
 }
 
-.iconLeftColWrap i.fa {
+.iconLeftColWrap i.fa, .iconLeftColWrap i.icon {
     font-size: 32px;
     border: 2px solid #66cc99;
     color: #66cc99;
@@ -578,7 +578,7 @@ p {
     text-align: center;
 }
 
-.iconLeftColWrap:hover i.fa {
+.iconLeftColWrap:hover i.fa, .iconLeftColWrap:hover i.icon {
     color: #fff;
     background: #66cc99;
 }
@@ -1043,7 +1043,7 @@ input[type="submit"]  {
     line-height: 24px;    
 }
 
-.footer i.fa {
+.footer i.fa, .footer i.icon {
     font-size: 26px;
     border: 2px solid #fff;
     color: #fff;
@@ -1061,7 +1061,7 @@ input[type="submit"]  {
     text-align: center;
 }
 
-.footer i.fa:hover {
+.footer i.fa:hover, .footer i.icon:hover {
     color: #66cc99;
     background: #fff;
 }
