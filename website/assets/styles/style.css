@@ -20,7 +20,7 @@
 
 /**
  * MAIN COLORS
- * green           = #66cc99
+ * green           = #339999
  * alternate green = #5cadad
  */
 
@@ -83,7 +83,7 @@ a {
     vertical-align:baseline;
     background:transparent;
     text-decoration: none;
-    color: #66cc99;
+    color: #339999;
     transition: color 0.3s;
     -webkit-transition: color 0.3s;
 }
@@ -151,8 +151,10 @@ p {
 #topContainer {
     width: 100%;
     position: fixed;
-    background: url('../img/background.jpg') no-repeat center;
-    background-size: cover;
+    background: -webkit-linear-gradient(bottom right, #339999, #006666);
+    background: -moz-linear-gradient(bottom right, #339999, #006666);
+    background: -ms-linear-gradient(bottom right, #339999, #006666);
+    background: linear-gradient(bottom right, #339999, #006666);
     top: 0;
     z-index: 1;
 }
@@ -233,7 +235,7 @@ p {
 }
 
 #followMenu .mainMenu li a:hover, #followMenu .mainMenu .menuActive a{
-    background: #66cc99 !important;
+    background: #339999 !important;
     color: #fff !important;
 }
 
@@ -282,7 +284,7 @@ p {
     z-index: 20;
     padding: 10px;
     font-size: 30px;
-    background: #66cc99;
+    background: #339999;
     display: none;
 }
 
@@ -360,7 +362,7 @@ p {
     width: 40px;
     height: 4px;
     margin: 20px auto;
-    background: #66cc99;
+    background: #339999;
 }
 
 .grayBgSection, .whiteBgSection {
@@ -435,8 +437,8 @@ p {
 .iconColWrap i.fa, .iconColWrap i.icon {
     min-width: 30px;
     font-size: 32px;
-    border: 2px solid #66cc99;
-    color: #66cc99;
+    border: 2px solid #339999;
+    color: #339999;
     padding: 40px;
     background: transparent;
     -webkit-border-radius: 350px;
@@ -452,7 +454,7 @@ p {
 
 .iconColWrap:hover i.fa, .iconColWrap:hover i.icon {
     color: #fff;
-    background: #66cc99;
+    background: #339999;
 }
 
 .iconColWrap h2 {
@@ -465,7 +467,7 @@ p {
 }
 
 .iconColWrap:hover h2 {
-    color: #66cc99;
+    color: #339999;
 }
 
 
@@ -499,8 +501,8 @@ p {
 
 .iconRightColWrap i.fa, .iconRightColWrap i.icon {
     font-size: 32px;
-    border: 2px solid #66cc99;
-    color: #66cc99;
+    border: 2px solid #339999;
+    color: #339999;
     padding: 25px;
     background: transparent;
     -webkit-border-radius: 350px;
@@ -516,7 +518,7 @@ p {
 
 .iconRightColWrap:hover i.fa, .iconRightColWrap:hover i.icon {
     color: #fff;
-    background: #66cc99;
+    background: #339999;
 }
 
 .iconRightColWrap h2 {
@@ -529,7 +531,7 @@ p {
 }
 
 .iconRightColWrap:hover h2 {
-    color: #66cc99;
+    color: #339999;
 }
 
 
@@ -563,8 +565,8 @@ p {
 
 .iconLeftColWrap i.fa, .iconLeftColWrap i.icon {
     font-size: 32px;
-    border: 2px solid #66cc99;
-    color: #66cc99;
+    border: 2px solid #339999;
+    color: #339999;
     padding: 25px;
     background: transparent;
     -webkit-border-radius: 350px;
@@ -580,7 +582,7 @@ p {
 
 .iconLeftColWrap:hover i.fa, .iconLeftColWrap:hover i.icon {
     color: #fff;
-    background: #66cc99;
+    background: #339999;
 }
 
 .iconLeftColWrap h2 {
@@ -593,7 +595,7 @@ p {
 }
 
 .iconLeftColWrap:hover h2 {
-    color: #66cc99;
+    color: #339999;
 }
 
 .iconLeftColWrap p {
@@ -731,7 +733,7 @@ p {
 }
 
 .revText {
-    color: #66cc99;
+    color: #339999;
     font-weight: 300;
     font-size: 30px;
     line-height: 38px;
@@ -793,7 +795,7 @@ p {
 }
 
 .screenImg:hover {
-    border-color: #66CC99;
+    border-color: #339999;
 }
 
 #screensViewportWrap {
@@ -858,8 +860,8 @@ button, input[type="submit"] {
 
 button.active, button:hover, input[type="submit"]:hover {
     color: #fff;
-    background: #66CC99;
-    border-color: #66CC99;
+    background: #339999;
+    border-color: #339999;
 }
 
 .screensArrows {
@@ -892,7 +894,7 @@ button.active, button:hover, input[type="submit"]:hover {
 .screensArrowsActive:hover {
     color: #fff;
     border-color: #fff;
-    background: #66CC99;
+    background: #339999;
 }
 
 #screensLeftAr i {
@@ -980,21 +982,21 @@ textarea {
 
 input:focus, textarea:focus {
     outline: 0 transparent;
-    border-color: #66CC99;
+    border-color: #339999;
 }
 
 input[type="submit"]  {
     font-size: 18px;
     padding: 15px 50px;
     margin: 0;
-    color: #66CC99;
-    border-color: #66CC99;
+    color: #339999;
+    border-color: #339999;
 }
 
 .del-fa {
     font-size: 26px;
-    border: 2px solid #66CC99;
-    color: #66CC99;
+    border: 2px solid #339999;
+    color: #339999;
     padding: 12px;
     min-width: 26px;
     text-align: center;
@@ -1030,8 +1032,10 @@ input[type="submit"]  {
  */
 .footer {
     width: 100%;
-    background: url('../img/background.jpg') no-repeat center;
-    background-size: cover;    
+    background: -webkit-linear-gradient(bottom left, #339999, #006666);
+    background: -moz-linear-gradient(bottom left, #339999, #006666);
+    background: -ms-linear-gradient(bottom left, #339999, #006666);
+    background: linear-gradient(bottom left, #339999, #006666);
     text-align: center;
     font-size: 14px;
     color: #fff;
@@ -1062,10 +1066,10 @@ input[type="submit"]  {
 }
 
 .footer i.fa:hover, .footer i.icon:hover {
-    color: #66cc99;
+    color: #339999;
     background: #fff;
 }
 
 .footer p a {
-    color: #99ffcc;
+    color: #4ae2e2;
 }
