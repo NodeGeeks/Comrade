@@ -13,7 +13,8 @@ attributes: {
     email: {
         type: 'email',
         required: true,
-        columnName: 'email'
+        columnName: 'email',
+        unique: true
     }
   }
 };

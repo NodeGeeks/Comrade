@@ -10,11 +10,15 @@ $('#submitBeta').click(function() {
         '/BetaEmails',
         {email: betaEmail},
         function () {
-            alert("Thank you!");
+            alert("Thank you! We will send you an email a few days before the app is ready to download.");
         }
     ).fail(function(res){
-        if (res.getResponseHeader("error") == null) {
-            alert("You forgot to insert something, or invalid email");
-        }
+            if (res.responseJSON.error.invalidAttributes.email[0].rule == "email") {
+                alert("You left the input empty, or typed an invalid email");
+            }
+            if (res.responseJSON.error.invalidAttributes.email[0].rule == "unique") {
+                alert("That email already exists");
+            }
+            console.log(res);
     });
 });
