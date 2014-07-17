@@ -842,15 +842,15 @@ p {
 
 button, input[type="submit"] {
     text-transform: uppercase;
-    background: #fff;
-    border: 2px solid #cccccc;
     color: #999;
     font-weight: 500;
     margin: 0 5px;
     padding: 8px 20px;
-    -webkit-border-radius: 45px;
-    -moz-border-radius: 45px;
-    border-radius: 45px;   
+    border: none;
+    background-color: rgba(255,255,255, 0.7);
+    -webkit-border-radius: px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
     font-size: 14px;
     cursor: pointer;
     transition: color 0.3s, background 0.3s, border-color 0.3s;
@@ -859,9 +859,11 @@ button, input[type="submit"] {
 }
 
 button.active, button:hover, input[type="submit"]:hover {
-    color: #fff;
-    background: #339999;
-    border-color: #339999;
+    border: none;
+    background-color: rgba(255,255,255, 0.7);
+    -webkit-border-radius: px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 .screensArrows {
@@ -954,11 +956,12 @@ input:not([type=submit])  {
     font-size: 16px;
     margin-bottom: 20px;
     padding: 15px 16px;
-    border: 2px solid #cccccc;
-    -webkit-border-radius: 45px;
-    -moz-border-radius: 45px;
-    border-radius: 45px;  
-    color: #666; 
+    border: none;
+    background-color: rgba(255,255,255, 0.7);
+    -webkit-border-radius: px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    color: #444;
     transition: border-color 0.6s;
     -webkit-transition: border-color 0.6s;
 }
@@ -989,8 +992,12 @@ input[type="submit"]  {
     font-size: 18px;
     padding: 15px 50px;
     margin: 0;
-    color: #339999;
-    border-color: #339999;
+    border: none;
+    background-color: rgba(255,255,255, 0.7);
+    -webkit-border-radius: px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    color: #444;
 }
 
 .del-fa {
@@ -1072,4 +1079,20 @@ input[type="submit"]  {
 
 .footer p a {
     color: #4ae2e2;
+}
+
+.beta-description {
+    text-align: center;
+    clear: both;
+    background: rgba(255,255,255, 0.7);
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    padding: 10px 15px;
+    color: #666;
+}
+
+.beta-description h3 {
+    color: #666;
 }

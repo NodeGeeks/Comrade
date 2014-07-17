@@ -50,7 +50,7 @@
 }
 
 .six-col {
-    width: 576px;
+    width: 576px !important;
 }
 
 .seven-col {
@@ -256,7 +256,7 @@ and (max-width : 1170px)
     }
 
     .six-col {
-        width: 362px;
+        width: 362px !important;
     }
 
     .seven-col {
